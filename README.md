@@ -10,15 +10,16 @@ yarn install
 yarn serve
 ```
 
-### Compiles and minifies for production
+### Compiles production build and serve it
 ```
+yarn global add serve
 yarn build
+serve -s dist
 ```
 
-### Lints and fixes files
+### View project on mobile device through ngrok
+build the project and serve the dist folder, see above. Download and configure [ngrok](https://ngrok.com/download). Open ngrok.exe:
 ```
-yarn lint
+ngrok http 5000  -host-header="localhost:5000"
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Navigate to to the https address on the mobile device.
