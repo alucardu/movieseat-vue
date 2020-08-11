@@ -1,6 +1,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { debounce } from 'lodash';
+import MovieSearchResults from '../../../stores/MovieSearchList';
 
 const baseurl = 'https://api.themoviedb.org/3/search/movie?';
 const apikey = 'api_key=a8f7039633f2065942cd8a28d7cadad4';
@@ -11,7 +12,7 @@ export default class MovieSearch extends Vue {
     if (searchQuery) {
       fetch(`${baseurl + apikey}&language=en-US&query=${searchQuery}&page=1&include_adult=false`)
         .then((response) => response.json())
-        .then((data) => console.log(searchQuery, data.results));
+        .then((data) => MovieSearchResults.commit('createList', data));
     } else {
       console.log('clear search');
     }
@@ -21,15 +22,16 @@ export default class MovieSearch extends Vue {
 
 <style scoped lang="scss">
   div#SeachContainer {
+    width: 100%;
     display: flex;
     justify-content: center;
-    position: relative;
     input {
       padding: 8px;
       margin: 12px 0 12px 0;
       width: 50%;
       border: none;
       font-size: 16px;
+      box-sizing: border-box;
       &:focus {
         outline: none;
         color: #fff;

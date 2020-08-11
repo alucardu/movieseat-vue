@@ -1,13 +1,13 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Header from './components/Header/Header.vue';
-import MovieSearch from './components/MovieSearch/MovieSearch.vue';
+import MovieSearchComponent from './components/MovieSearch/MovieSearchComponent.vue';
 import 'reset-css';
 
 @Component({
   components: {
     Header,
-    MovieSearch,
+    MovieSearchComponent,
   },
 })
 export default class App extends Vue {}
@@ -17,12 +17,13 @@ export default class App extends Vue {}
   body {
     background: #252525;
     color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
   }
 </style>
 
 <template>
   <div id="app">
     <Header />
-    <MovieSearch />
+    <MovieSearchComponent />
   </div>
 </template>
