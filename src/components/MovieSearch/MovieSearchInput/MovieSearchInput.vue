@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { debounce } from 'lodash';
-import MovieSearchResults from '../../../stores/MovieSearchList';
+import MovieSearchListStore from '../../../stores/MovieSearchListStore';
 
 const baseurl = 'https://api.themoviedb.org/3/search/movie?';
 const apikey = 'api_key=a8f7039633f2065942cd8a28d7cadad4';
@@ -12,7 +12,7 @@ export default class MovieSearch extends Vue {
     if (searchQuery) {
       fetch(`${baseurl + apikey}&language=en-US&query=${searchQuery}&page=1&include_adult=false`)
         .then((response) => response.json())
-        .then((data) => MovieSearchResults.commit('createList', data));
+        .then((data) => MovieSearchListStore.commit('createList', data));
     } else {
       console.log('clear search');
     }

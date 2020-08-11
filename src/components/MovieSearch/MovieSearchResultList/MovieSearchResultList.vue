@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import MovieSearchResults from '../../../stores/MovieSearchList';
+import MovieSearchListStore from '../../../stores/MovieSearchListStore';
 
 type Movie = {
   title: string;
@@ -12,7 +12,7 @@ export default class MovieSearchResultList extends Vue {
   imagePath = 'https://image.tmdb.org/t/p/w45';
 
   get searchList(): Movie[] {
-    return MovieSearchResults.state.searchList;
+    return MovieSearchListStore.state.searchList;
   }
 }
 
