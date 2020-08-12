@@ -67,6 +67,7 @@ export default class MovieSearch extends Vue {
 <template>
   <div id="SeachContainer">
     <input
+      id="movieSearchInput"
       ref='searchInput'
       placeholder="Enter a movie title"
       v-on:blur='clearSearchResultsOnClick($event)'
