@@ -3,6 +3,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import TrackedMoviesStore from '@/stores/TrackedMoviesStore';
 import localforage from 'localforage';
 import DeleteForeverIcon from 'vue-material-design-icons/DeleteForever.vue';
+import SnackbarStore from '@/stores/SnackbarStore';
 
 type Movie = {
   title: string;
@@ -26,6 +27,7 @@ export default class RemoveMovieFromDashboard extends Vue {
         trackedMovieList.splice(index, 1);
         localforage.setItem('trackedMovies', trackedMovieList);
         TrackedMoviesStore.commit('removeMovieFromTrackedList', trackedMovieList);
+        SnackbarStore.commit('showSnackbar', { text: `${this.movie.title} has been removed from your watchlist.`, color: '#38bf00' });
       }
     });
   }
