@@ -1,21 +1,38 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import MovieSearchListStore from '../../../stores/MovieSearchListStore';
+import TrackedMoviestStore from '../../../stores/TrackedMoviesStore';
+import AddMovieToDashboard from './AddMoveToDashboard/AddMovieToDashboard.vue';
 
 type Movie = {
   title: string;
   id: number;
 }
 
-@Component
+@Component({
+  components: {
+    AddMovieToDashboard,
+  },
+})
 export default class MovieSearchResultList extends Vue {
+  mounted() {
+    TrackedMoviestStore.subscribe(() => {
+      MovieSearchListStore.commit('clearList', []);
+    });
+  }
+
   imagePath = 'https://image.tmdb.org/t/p/w45';
+
+  public hover = 0;
+
+  public hoverEvent(index: number) {
+    this.hover = index;
+  }
 
   get searchList(): Movie[] {
     return MovieSearchListStore.state.searchList;
   }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -39,7 +56,6 @@ export default class MovieSearchResultList extends Vue {
         background: #444444;
       }
       &:hover {
-        cursor: pointer;
         background: #0fcece;
       }
       p {
@@ -67,7 +83,11 @@ export default class MovieSearchResultList extends Vue {
 
 <template>
   <ul id='movieSearchResultList'>
-    <li v-for='movie in searchList' :key='movie.id'>
+    <li
+      v-for='movie in searchList'
+      v-on:mouseover='hoverEvent(movie.id)'
+      v-on:mouseleave='hoverEvent(null)'
+      :key='movie.id'>
       <p>
         <span>{{ movie.original_title }}</span>
         <span>{{ movie.release_date }}</span>
@@ -75,6 +95,7 @@ export default class MovieSearchResultList extends Vue {
       <img :src="movie.poster_path
         ? `${imagePath + movie.poster_path}`
         : 'poster_not_found.svg'" />
+      <AddMovieToDashboard v-if='hover === movie.id' :movie="movie"/>
     </li>
   </ul>
 </template>

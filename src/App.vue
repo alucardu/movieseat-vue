@@ -2,12 +2,14 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Header from './components/Header/Header.vue';
 import MovieSearchComponent from './components/MovieSearch/MovieSearchComponent.vue';
+import Dashboard from './components/Dashboard/Dashboard.vue';
 import 'reset-css';
 
 @Component({
   components: {
     Header,
     MovieSearchComponent,
+    Dashboard,
   },
 })
 export default class App extends Vue {}
@@ -25,5 +27,6 @@ export default class App extends Vue {}
   <div id="app">
     <Header />
     <MovieSearchComponent />
+    <Dashboard />
   </div>
 </template>
