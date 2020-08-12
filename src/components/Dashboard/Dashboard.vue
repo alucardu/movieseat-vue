@@ -1,10 +1,10 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import MovieDashboard from './MovieDashboard/MovieDashboard.vue';
+import MovieOverview from './MovieOverview/MovieOverview.vue';
 
 @Component({
   components: {
-    MovieDashboard,
+    MovieOverview,
   },
 })
 export default class Dashboard extends Vue {}
@@ -14,5 +14,5 @@ export default class Dashboard extends Vue {}
 </style>
 
 <template>
-  <MovieDashboard />
+  <MovieOverview />
 </template>
