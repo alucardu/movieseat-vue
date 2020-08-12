@@ -26,6 +26,11 @@ export default class MovieInOverview extends Vue {
 <style scoped lang="scss">
   .movieInOverviewContainer {
     position: relative;
+    height: 100%;
+    img {
+      height: 100%;
+      width: 100%;
+    }
   }
 </style>
 
