@@ -10,7 +10,7 @@ export default new Vuex.Store({
       text: '',
       timeout: 6000,
       multiline: false,
-      color: '',
+      type: '',
     },
   },
   mutations: {
@@ -31,8 +31,7 @@ export default new Vuex.Store({
         state.snackbar.timeout = payload.timeout;
       }
 
-      state.snackbar.color = payload.color;
-
+      state.snackbar.type = payload.type;
       state.snackbar.visible = true;
     },
     closeSnackbar(state) {

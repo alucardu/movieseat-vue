@@ -33,17 +33,17 @@ export default class AddMovieToDashboard extends Vue {
 
   addMovie() {
     let text = `${this.movie.title} is already added to your watchlist.`;
-    let color = '#ff9900';
+    let type = 'warning';
     if (!this.checkIsMovieDuplicate(this.movies, this.movie)) {
       TrackedMoviestStore.commit('addMovieToTrackedMovies', this.movie);
       localforage.setItem('trackedMovies', this.movies);
       text = `${this.movie.title} is added to your watchlist.`;
-      color = '#38bf00';
+      type = 'success';
     } else {
       (document.getElementById('movieSearchInput') as HTMLInputElement).value = '';
     }
     MovieSearchListStore.commit('clearList', []);
-    SnackbarStore.commit('showSnackbar', { text, color });
+    SnackbarStore.commit('showSnackbar', { text, type });
   }
 
   checkIsMovieDuplicate = (movies: Movie[], movie: Movie) => {
