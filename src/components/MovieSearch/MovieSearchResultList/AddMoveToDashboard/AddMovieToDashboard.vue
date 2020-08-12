@@ -21,15 +21,32 @@ export default class AddMovieToDashboard extends Vue {
     return this.movie.backdrop_path ? `background-image: url(${backdropUrl + this.movie.backdrop_path}` : null;
   }
 
-  trackedMovies(): Movie[] {
-    return TrackedMoviestStore.state.trackedMovieList;
+  movies: Array<Movie> = [{
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    title: 'default', release_date: 'default', id: 0, backdrop_path: 'default',
+  }];
+
+  mounted() {
+    this.movies = TrackedMoviestStore.state.trackedMovieList;
   }
 
-  addMovie = () => {
-    TrackedMoviestStore.commit('addMovieToTrackedMovies', this.movie);
-    localforage.setItem('trackedMovies', this.trackedMovies());
+  addMovie() {
+    if (!this.checkIsMovieDuplicate(this.movies, this.movie)) {
+      TrackedMoviestStore.commit('addMovieToTrackedMovies', this.movie);
+      localforage.setItem('trackedMovies', this.movies);
+    } else {
+      (document.getElementById('movieSearchInput') as HTMLInputElement).value = '';
+    }
     MovieSearchListStore.commit('clearList', []);
   }
+
+  checkIsMovieDuplicate = (movies: Movie[], movie: Movie) => {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const item of movies) {
+      if (item.id === movie.id) return true;
+    }
+    return false;
+  };
 }
 </script>
 

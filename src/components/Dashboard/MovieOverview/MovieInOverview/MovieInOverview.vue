@@ -17,8 +17,15 @@ export default class MovieInOverview extends Vue {
 </script>
 
 <style scoped lang="scss">
+  .MovieContainer {
+    height: 100%;
+    img {
+      height: 100%;
+      width: 100%;
+    }
+  }
 </style>
 
 <template>
-  <div><img :src="imagePath + movie.poster_path" /></div>
+  <div class='MovieContainer'><img :src="imagePath + movie.poster_path" /></div>
 </template>
