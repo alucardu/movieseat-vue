@@ -18,9 +18,11 @@ export default new Vuex.Store({
     populateTrackedMovies(state, payload) {
       state.trackedMovieList = payload;
     },
-
     addMovieToTrackedMovies(state, payload) {
       state.trackedMovieList.push(payload);
+    },
+    removeMovieFromTrackedList(state, payload) {
+      state.trackedMovieList = payload;
     },
   },
   getters: {

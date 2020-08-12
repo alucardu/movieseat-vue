@@ -1,5 +1,6 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import RemoveMovieFromDashboard from './RemoveMovieFromDashboard/RemoveMovieFromDashboard.vue';
 
 type Movie = {
   title: string;
@@ -8,17 +9,33 @@ type Movie = {
   backdrop_path: string;
 }
 
-@Component
+@Component({
+  components: {
+    RemoveMovieFromDashboard,
+  },
+})
 export default class MovieInOverview extends Vue {
   @Prop() readonly movie!: Movie;
+
+  hover = false;
 
   imagePath = 'https://image.tmdb.org/t/p/w185/';
 }
 </script>
 
 <style scoped lang="scss">
+  .movieInOverviewContainer {
+    position: relative;
+  }
 </style>
 
 <template>
-  <div><img :src="imagePath + movie.poster_path" /></div>
+  <div
+      class='movieInOverviewContainer'
+      v-on:mouseover='hover = true'
+      v-on:mouseleave='hover = false'
+    >
+    <img :src="imagePath + movie.poster_path" />
+    <RemoveMovieFromDashboard v-if='hover' :movie=movie />
+  </div>
 </template>
