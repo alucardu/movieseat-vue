@@ -2,6 +2,12 @@
 import { Vue, Component } from 'vue-property-decorator';
 import MovieSearchResultList from './MovieSearchResultList/MovieSearchResultList.vue';
 import MovieSearchInput from './MovieSearchInput/MovieSearchInput.vue';
+import MovieSearchListStore from '../../stores/MovieSearchListStore';
+
+type Movie = {
+  title: string;
+  id: number;
+}
 
 @Component({
   components: {
@@ -9,7 +15,11 @@ import MovieSearchInput from './MovieSearchInput/MovieSearchInput.vue';
     MovieSearchResultList,
   },
 })
-export default class MovieSearchComponent extends Vue {}
+export default class MovieSearchComponent extends Vue {
+  get searchList(): Movie[] {
+    return MovieSearchListStore.state.searchList;
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -23,6 +33,6 @@ export default class MovieSearchComponent extends Vue {}
 <template>
   <div id='movieSearchContainer'>
     <MovieSearchInput />
-    <MovieSearchResultList />
+    <MovieSearchResultList v-if='searchList.length > 0'/>
   </div>
 </template>
