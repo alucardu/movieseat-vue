@@ -27,7 +27,10 @@ export default class RemoveMovieFromDashboard extends Vue {
         trackedMovieList.splice(index, 1);
         localforage.setItem('trackedMovies', trackedMovieList);
         TrackedMoviesStore.commit('removeMovieFromTrackedList', trackedMovieList);
-        SnackbarStore.commit('showSnackbar', { text: `${this.movie.title} has been removed from your watchlist.`, color: '#38bf00' });
+        SnackbarStore.commit('showSnackbar', {
+          text: `${this.movie.title} has been removed from your watchlist.`,
+          type: 'success',
+        });
       }
     });
   }
