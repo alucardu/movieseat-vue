@@ -46,6 +46,7 @@ export default class MovieSearch extends Vue {
     display: flex;
     justify-content: center;
     input {
+      background: #fff;
       padding: 8px;
       margin: 12px 0 12px 0;
       width: 50%;

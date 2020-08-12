@@ -9,4 +9,7 @@ module.exports = {
       .loader('babel-loader')
       .end();
   },
+  transpileDependencies: [
+    'vuetify',
+  ],
 };

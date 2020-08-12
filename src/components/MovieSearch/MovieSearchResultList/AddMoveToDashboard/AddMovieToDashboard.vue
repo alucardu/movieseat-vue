@@ -1,8 +1,9 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import localforage from 'localforage';
-import TrackedMoviestStore from '../../../../stores/TrackedMoviesStore';
-import MovieSearchListStore from '../../../../stores/MovieSearchListStore';
+import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
+import MovieSearchListStore from '@/stores/MovieSearchListStore';
+import SnackbarStore from '@/stores/SnackbarStore';
 
 type Movie = {
   title: string;
@@ -31,13 +32,18 @@ export default class AddMovieToDashboard extends Vue {
   }
 
   addMovie() {
+    let text = `${this.movie.title} is already added to your watchlist.`;
+    let color = '#ff9900';
     if (!this.checkIsMovieDuplicate(this.movies, this.movie)) {
       TrackedMoviestStore.commit('addMovieToTrackedMovies', this.movie);
       localforage.setItem('trackedMovies', this.movies);
+      text = `${this.movie.title} is added to your watchlist.`;
+      color = '#38bf00';
     } else {
       (document.getElementById('movieSearchInput') as HTMLInputElement).value = '';
     }
     MovieSearchListStore.commit('clearList', []);
+    SnackbarStore.commit('showSnackbar', { text, color });
   }
 
   checkIsMovieDuplicate = (movies: Movie[], movie: Movie) => {
