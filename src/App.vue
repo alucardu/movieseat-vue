@@ -26,7 +26,7 @@ export default class App extends Vue {}
 </style>
 
 <template>
-  <div id="app">
+  <div id="app" data-app>
     <Header />
     <MovieSearchComponent />
     <Dashboard />

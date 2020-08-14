@@ -12,6 +12,11 @@ type Movie = {
   backdrop_path: string;
 }
 
+type SortingConfiguration = {
+  sortType: string;
+  ascOrder: boolean;
+}
+
 @Component({
   components: {
     MovieInOverview,
@@ -19,7 +24,11 @@ type Movie = {
 })
 export default class MovieOverview extends Vue {
   mounted() {
+    localforage.getItem('sortingConfiguration').then((value) => {
+      if (!value) localforage.setItem('sortingConfiguration', { sortType: 'Release date', ascOrder: true });
+    });
     this.populateTrackedMoviesState();
+
     window.addEventListener('resize', this.MoviesInRows);
     return () => {
       window.removeEventListener('resize', this.MoviesInRows);
@@ -35,10 +44,7 @@ export default class MovieOverview extends Vue {
 
   populateTrackedMoviesState() {
     localforage.getItem<Movie[]>('trackedMovies').then((movieList) => {
-      if (movieList) {
-        const populatedList = movieList;
-        TrackedMoviestStore.commit('populateTrackedMovies', populatedList);
-      }
+      if (movieList) TrackedMoviestStore.dispatch('sortTrackedMovies', movieList);
     });
   }
 }
