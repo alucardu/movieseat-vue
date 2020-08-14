@@ -28,14 +28,14 @@ export default class AddMovieToDashboard extends Vue {
   }];
 
   mounted() {
-    this.movies = TrackedMoviestStore.state.trackedMovieList;
+    this.movies = TrackedMoviestStore.getters.list;
   }
 
   addMovie() {
     let text = `${this.movie.title} is already added to your watchlist.`;
     let type = 'warning';
     if (!this.checkIsMovieDuplicate(this.movies, this.movie)) {
-      TrackedMoviestStore.commit('addMovieToTrackedMovies', this.movie);
+      TrackedMoviestStore.dispatch('addMovieToTrackedMovies', this.movie);
       localforage.setItem('trackedMovies', this.movies);
       text = `${this.movie.title} is added to your watchlist.`;
       type = 'success';
