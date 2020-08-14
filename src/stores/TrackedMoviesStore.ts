@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Vuex from 'vuex';
+import Vuex, { ActionContext } from 'vuex';
 import { orderBy } from 'lodash';
 import localforage from 'localforage';
 
@@ -28,7 +28,11 @@ function returnSortType(movie: Movie, selectedSortType: string) {
   }
 }
 
-async function sortTrackedMovies(state: any, movieList: Movie[]) {
+async function sortTrackedMovies(state: ActionContext<{
+      trackedMovieList: Movie[];
+    }, {
+      trackedMovieList: Movie[];
+    }>, movieList: Movie[]) {
   let sortType = '';
   let ascOrder = false;
   let trackedMoviesSorted: Movie[] = [];
