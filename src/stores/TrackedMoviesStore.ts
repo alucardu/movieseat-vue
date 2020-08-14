@@ -67,7 +67,7 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async sortTrackedMovies(state, movieList) {
+    sortTrackedMovies(state, movieList) {
       sortTrackedMovies(state, movieList);
     },
     addMovieToTrackedMovies(state, movie) {
