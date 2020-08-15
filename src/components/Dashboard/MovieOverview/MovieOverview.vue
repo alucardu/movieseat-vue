@@ -29,6 +29,10 @@ export default class MovieOverview extends Vue {
     });
     this.populateTrackedMoviesState();
 
+    localforage.getItem('rating').then((value) => {
+      if (!value) localforage.setItem('rating', []);
+    });
+
     window.addEventListener('resize', this.MoviesInRows);
     return () => {
       window.removeEventListener('resize', this.MoviesInRows);
