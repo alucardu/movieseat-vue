@@ -111,6 +111,8 @@ export default class MovieRating extends Vue {
     display: flex;
     div {
       span {
+        color: #efff00;
+        cursor: pointer;
         float: left;
         padding: 10px 4.5px;
       }
