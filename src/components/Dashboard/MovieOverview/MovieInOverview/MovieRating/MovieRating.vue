@@ -3,6 +3,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import StarOutlineIcon from 'vue-material-design-icons/StarOutline.vue';
 import StarIcon from 'vue-material-design-icons/Star.vue';
 import localforage from 'localforage';
+import SnackbarStore from '@/stores/SnackbarStore';
 
 type Movie = {
   title: string;
@@ -94,6 +95,10 @@ export default class MovieRating extends Vue {
       }
     });
     this.storedRating = rating;
+    SnackbarStore.commit('showSnackbar', {
+      text: `${this.movie.title} has been rated!`,
+      type: 'success',
+    });
   }
 
   resetRating() {
