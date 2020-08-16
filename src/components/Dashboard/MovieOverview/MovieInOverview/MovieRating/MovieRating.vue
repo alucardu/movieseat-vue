@@ -14,7 +14,7 @@ type Movie = {
 }
 
 type Rating = {
-  rating: number;
+  value: number;
   id: number;
 }
 
@@ -31,35 +31,27 @@ export default class MovieRating extends Vue {
   storedRating = 0;
 
   mounted() {
-    localforage.getItem<[]>('rating').then((value) => {
-      if (value) {
-        value.forEach((rating: Rating) => {
+    localforage.getItem<[]>('rating').then((ratings) => {
+      if (ratings) {
+        ratings.forEach((rating: Rating) => {
           if (rating.id === this.movie.id) {
-            this.storedRating = rating.rating;
-            this.initialRating(rating.rating);
+            this.storedRating = rating.value;
+            this.displayRating(this.storedRating);
           }
         });
       }
     });
   }
 
-  fullStar = ['fillerValue', false, false, false, false, false]
+  fullStar = ['fillerValue', false, false, false, false, false];
 
-  halfStar = ['fillerValue', false, false, false, false, false]
+  halfStar = ['fillerValue', false, false, false, false, false];
 
-  initialRating(rating: number) {
-    for (let index = 0; index <= rating; index += 0.5) {
-      Vue.set(this.fullStar, index, true);
-    }
-    if (!Number.isInteger(rating)) Vue.set(this.halfStar, Math.round(rating), true);
-  }
-
-  hoverRating(rating: number) {
+  displayRating(rating: number) {
     for (let index = 1; index <= 5; index++) {
       Vue.set(this.fullStar, index, false);
       Vue.set(this.halfStar, index, false);
       if (index <= rating) Vue.set(this.fullStar, index, true);
-
       if (!Number.isInteger(rating)) {
         if (index < Math.round(rating)) Vue.set(this.fullStar, index, true);
         if (index === Math.round(rating)) Vue.set(this.halfStar, index, true);
@@ -73,7 +65,7 @@ export default class MovieRating extends Vue {
         value.forEach((ratings: Rating, index) => {
           if (ratings.id === this.movie.id) value.splice(index, 1);
         });
-        value.push({ rating, id: this.movie.id });
+        value.push({ value: rating, id: this.movie.id });
         localforage.setItem('rating', value);
       }
     });
@@ -82,22 +74,6 @@ export default class MovieRating extends Vue {
       text: `${this.movie.title} has been rated!`,
       type: 'success',
     });
-  }
-
-  restoreRating() {
-    for (let index = 1; index <= this.storedRating; index += 0.5) {
-      Vue.set(this.fullStar, index, true);
-      Vue.set(this.halfStar, index, false);
-    }
-
-    for (let index = Math.floor(this.storedRating); index <= 5; index += 0.5) {
-      if (this.storedRating !== 5) Vue.set(this.fullStar, index + 1, false);
-      Vue.set(this.halfStar, index, false);
-    }
-
-    if (!Number.isInteger(this.storedRating)) {
-      Vue.set(this.halfStar, Math.round(this.storedRating), true);
-    }
   }
 }
 </script>
@@ -163,14 +139,14 @@ export default class MovieRating extends Vue {
 
 <template>
   <div class='ratingContainer'
-    v-on:mouseleave='restoreRating()'>
+    v-on:mouseleave='displayRating(storedRating)'>
     <div>
       <div
         class='x x1'
-        v-on:mouseenter='hoverRating(0.5)'
+        v-on:mouseenter='displayRating(0.5)'
         v-on:click='addRating(0.5)' />
       <div class='y y1'
-        v-on:mouseenter='hoverRating(1)'
+        v-on:mouseenter='displayRating(1)'
         v-on:click='addRating(1)' />
       <StarHalfFullIcon
         v-if='halfStar[1]' />
@@ -182,9 +158,9 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x2'
-        v-on:mouseenter='hoverRating(1.5)'
+        v-on:mouseenter='displayRating(1.5)'
         v-on:click='addRating(1.5)' />
-      <div class='y y2' v-on:mouseenter='hoverRating(2)' v-on:click='addRating(2)' />
+      <div class='y y2' v-on:mouseenter='displayRating(2)' v-on:click='addRating(2)' />
       <StarHalfFullIcon v-if='halfStar[2]' />
       <StarIcon
         v-if='fullStar[2]' />
@@ -194,9 +170,9 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x3'
-        v-on:mouseenter='hoverRating(2.5)'
+        v-on:mouseenter='displayRating(2.5)'
         v-on:click='addRating(2.5)' />
-      <div class='y y3' v-on:mouseenter='hoverRating(3)' v-on:click='addRating(3)' />
+      <div class='y y3' v-on:mouseenter='displayRating(3)' v-on:click='addRating(3)' />
       <StarHalfFullIcon v-if='halfStar[3]' />
       <StarIcon
         v-if='fullStar[3]' />
@@ -206,9 +182,9 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x4'
-        v-on:mouseenter='hoverRating(3.5)'
+        v-on:mouseenter='displayRating(3.5)'
         v-on:click='addRating(3.5)' />
-      <div class='y y4' v-on:mouseenter='hoverRating(4)' v-on:click='addRating(4)' />
+      <div class='y y4' v-on:mouseenter='displayRating(4)' v-on:click='addRating(4)' />
       <StarHalfFullIcon v-if='halfStar[4]' />
       <StarIcon
         v-if='fullStar[4]' />
@@ -218,9 +194,9 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x5'
-        v-on:mouseenter='hoverRating(4.5)'
+        v-on:mouseenter='displayRating(4.5)'
         v-on:click='addRating(4.5)' />
-      <div class='y y5' v-on:mouseenter='hoverRating(5)' v-on:click='addRating(5)' />
+      <div class='y y5' v-on:mouseenter='displayRating(5)' v-on:click='addRating(5)' />
       <StarHalfFullIcon v-if='halfStar[5]' />
       <StarIcon
         v-if='fullStar[5]' />
