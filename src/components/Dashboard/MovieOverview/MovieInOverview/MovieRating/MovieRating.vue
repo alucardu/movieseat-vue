@@ -54,7 +54,7 @@ export default class MovieRating extends Vue {
     if (!Number.isInteger(rating)) Vue.set(this.halfStar, Math.round(rating), true);
   }
 
-  hoverStarIn(rating: number) {
+  hoverRating(rating: number) {
     for (let index = 1; index <= 5; index++) {
       Vue.set(this.fullStar, index, false);
       Vue.set(this.halfStar, index, false);
@@ -167,10 +167,10 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x1'
-        v-on:mouseenter='hoverStarIn(0.5)'
+        v-on:mouseenter='hoverRating(0.5)'
         v-on:click='addRating(0.5)' />
       <div class='y y1'
-        v-on:mouseenter='hoverStarIn(1)'
+        v-on:mouseenter='hoverRating(1)'
         v-on:click='addRating(1)' />
       <StarHalfFullIcon
         v-if='halfStar[1]' />
@@ -182,9 +182,9 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x2'
-        v-on:mouseenter='hoverStarIn(1.5)'
+        v-on:mouseenter='hoverRating(1.5)'
         v-on:click='addRating(1.5)' />
-      <div class='y y2' v-on:mouseenter='hoverStarIn(2)' v-on:click='addRating(2)' />
+      <div class='y y2' v-on:mouseenter='hoverRating(2)' v-on:click='addRating(2)' />
       <StarHalfFullIcon v-if='halfStar[2]' />
       <StarIcon
         v-if='fullStar[2]' />
@@ -194,9 +194,9 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x3'
-        v-on:mouseenter='hoverStarIn(2.5)'
+        v-on:mouseenter='hoverRating(2.5)'
         v-on:click='addRating(2.5)' />
-      <div class='y y3' v-on:mouseenter='hoverStarIn(3)' v-on:click='addRating(3)' />
+      <div class='y y3' v-on:mouseenter='hoverRating(3)' v-on:click='addRating(3)' />
       <StarHalfFullIcon v-if='halfStar[3]' />
       <StarIcon
         v-if='fullStar[3]' />
@@ -206,9 +206,9 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x4'
-        v-on:mouseenter='hoverStarIn(3.5)'
+        v-on:mouseenter='hoverRating(3.5)'
         v-on:click='addRating(3.5)' />
-      <div class='y y4' v-on:mouseenter='hoverStarIn(4)' v-on:click='addRating(4)' />
+      <div class='y y4' v-on:mouseenter='hoverRating(4)' v-on:click='addRating(4)' />
       <StarHalfFullIcon v-if='halfStar[4]' />
       <StarIcon
         v-if='fullStar[4]' />
@@ -218,9 +218,9 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x5'
-        v-on:mouseenter='hoverStarIn(4.5)'
+        v-on:mouseenter='hoverRating(4.5)'
         v-on:click='addRating(4.5)' />
-      <div class='y y5' v-on:mouseenter='hoverStarIn(5)' v-on:click='addRating(5)' />
+      <div class='y y5' v-on:mouseenter='hoverRating(5)' v-on:click='addRating(5)' />
       <StarHalfFullIcon v-if='halfStar[5]' />
       <StarIcon
         v-if='fullStar[5]' />
