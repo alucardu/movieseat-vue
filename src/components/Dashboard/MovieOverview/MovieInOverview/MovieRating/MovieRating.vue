@@ -43,45 +43,27 @@ export default class MovieRating extends Vue {
     });
   }
 
-  fullStar = [false, false, false, false, false, false]
+  fullStar = ['fillerValue', false, false, false, false, false]
 
-  halfStar = [false, false, false, false, false, false]
+  halfStar = ['fillerValue', false, false, false, false, false]
 
   initialRating(rating: number) {
     for (let index = 0; index <= rating; index += 0.5) {
       Vue.set(this.fullStar, index, true);
-      this.fullStar[index] = true;
     }
     if (!Number.isInteger(rating)) Vue.set(this.halfStar, Math.round(rating), true);
   }
 
   hoverStarIn(rating: number) {
-    for (let index = 1; index <= rating; index++) {
-      if (rating <= this.storedRating) {
-        for (let secondIndex = rating; secondIndex <= this.storedRating; secondIndex++) {
-          Vue.set(this.fullStar, secondIndex, false);
-        }
-        Vue.set(this.fullStar, index, true);
-        Vue.set(this.halfStar, index, false);
-        Vue.set(this.halfStar, index + 1, false);
-      } else {
-        Vue.set(this.fullStar, index, true);
-        Vue.set(this.halfStar, index, false);
-        Vue.set(this.halfStar, index + 1, false);
-      }
-    }
-  }
-
-  hoverHalfStarIn(rating: number) {
-    Vue.set(this.halfStar, rating, true);
-    Vue.set(this.fullStar, rating, false);
-    for (let index = 1; index <= rating; index++) {
-      Vue.set(this.fullStar, index - 1, true);
-      Vue.set(this.halfStar, index - 1, false);
-    }
-    for (let index = rating; index <= 5; index++) {
+    for (let index = 1; index <= 5; index++) {
       Vue.set(this.fullStar, index, false);
-      if (index > rating) Vue.set(this.halfStar, index, false);
+      Vue.set(this.halfStar, index, false);
+      if (index <= rating) Vue.set(this.fullStar, index, true);
+
+      if (!Number.isInteger(rating)) {
+        if (index < Math.round(rating)) Vue.set(this.fullStar, index, true);
+        if (index === Math.round(rating)) Vue.set(this.halfStar, index, true);
+      }
     }
   }
 
@@ -185,7 +167,7 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x1'
-        v-on:mouseenter='hoverHalfStarIn(1)'
+        v-on:mouseenter='hoverStarIn(0.5)'
         v-on:click='addRating(0.5)' />
       <div class='y y1'
         v-on:mouseenter='hoverStarIn(1)'
@@ -200,7 +182,7 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x2'
-        v-on:mouseenter='hoverHalfStarIn(2)'
+        v-on:mouseenter='hoverStarIn(1.5)'
         v-on:click='addRating(1.5)' />
       <div class='y y2' v-on:mouseenter='hoverStarIn(2)' v-on:click='addRating(2)' />
       <StarHalfFullIcon v-if='halfStar[2]' />
@@ -212,7 +194,7 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x3'
-        v-on:mouseenter='hoverHalfStarIn(3)'
+        v-on:mouseenter='hoverStarIn(2.5)'
         v-on:click='addRating(2.5)' />
       <div class='y y3' v-on:mouseenter='hoverStarIn(3)' v-on:click='addRating(3)' />
       <StarHalfFullIcon v-if='halfStar[3]' />
@@ -224,7 +206,7 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x4'
-        v-on:mouseenter='hoverHalfStarIn(4)'
+        v-on:mouseenter='hoverStarIn(3.5)'
         v-on:click='addRating(3.5)' />
       <div class='y y4' v-on:mouseenter='hoverStarIn(4)' v-on:click='addRating(4)' />
       <StarHalfFullIcon v-if='halfStar[4]' />
@@ -236,7 +218,7 @@ export default class MovieRating extends Vue {
     <div>
       <div
         class='x x5'
-        v-on:mouseenter='hoverHalfStarIn(5)'
+        v-on:mouseenter='hoverStarIn(4.5)'
         v-on:click='addRating(4.5)' />
       <div class='y y5' v-on:mouseenter='hoverStarIn(5)' v-on:click='addRating(5)' />
       <StarHalfFullIcon v-if='halfStar[5]' />
