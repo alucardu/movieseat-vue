@@ -43,50 +43,45 @@ export default class MovieRating extends Vue {
     });
   }
 
-  hoverArray = [false, false, false, false, false, false]
+  fullStar = [false, false, false, false, false, false]
 
   halfStar = [false, false, false, false, false, false]
 
-  somevalue = false;
-
   initialRating(rating: number) {
-    // eslint-disable-next-line no-plusplus
     for (let index = 0; index <= rating; index += 0.5) {
-      this.somevalue = !this.somevalue;
-      this.hoverArray[index] = true;
+      Vue.set(this.fullStar, index, true);
+      this.fullStar[index] = true;
     }
-    if (!Number.isInteger(rating)) this.halfStar[Math.round(rating)] = true;
+    if (!Number.isInteger(rating)) Vue.set(this.halfStar, Math.round(rating), true);
   }
 
-  rateMovie(rating: number) {
-    // eslint-disable-next-line no-plusplus
+  hoverStarIn(rating: number) {
     for (let index = 1; index <= rating; index++) {
       if (rating <= this.storedRating) {
-        // eslint-disable-next-line no-plusplus
         for (let secondIndex = rating; secondIndex <= this.storedRating; secondIndex++) {
-          this.hoverArray[secondIndex] = false;
-          //
+          Vue.set(this.fullStar, secondIndex, false);
         }
-
-        this.somevalue = !this.somevalue;
-        this.hoverArray[index] = true;
-        this.halfStar[index] = false;
-        this.halfStar[index + 1] = false;
+        Vue.set(this.fullStar, index, true);
+        Vue.set(this.halfStar, index, false);
+        Vue.set(this.halfStar, index + 1, false);
       } else {
-        this.somevalue = !this.somevalue;
-        this.hoverArray[index] = true;
-        this.halfStar[index] = false;
-        this.halfStar[index + 1] = false;
-        //
+        Vue.set(this.fullStar, index, true);
+        Vue.set(this.halfStar, index, false);
+        Vue.set(this.halfStar, index + 1, false);
       }
     }
   }
 
-  rateMoviex(rating: number) {
-    // eslint-disable-next-line no-plusplus
+  hoverHalfStarIn(rating: number) {
+    Vue.set(this.halfStar, rating, true);
+    Vue.set(this.fullStar, rating, false);
     for (let index = 1; index <= rating; index++) {
-      this.somevalue = !this.somevalue;
-      this.hoverArray[index] = false;
+      Vue.set(this.fullStar, index - 1, true);
+      Vue.set(this.halfStar, index - 1, false);
+    }
+    for (let index = rating; index <= 5; index++) {
+      Vue.set(this.fullStar, index, false);
+      if (index > rating) Vue.set(this.halfStar, index, false);
     }
   }
 
@@ -94,9 +89,7 @@ export default class MovieRating extends Vue {
     localforage.getItem<Rating[]>('rating').then((value) => {
       if (value) {
         value.forEach((ratings: Rating, index) => {
-          if (ratings.id === this.movie.id) {
-            value.splice(index, 1);
-          }
+          if (ratings.id === this.movie.id) value.splice(index, 1);
         });
         value.push({ rating, id: this.movie.id });
         localforage.setItem('rating', value);
@@ -109,58 +102,20 @@ export default class MovieRating extends Vue {
     });
   }
 
-  resetRating() {
-    // eslint-disable-next-line no-plusplus
+  restoreRating() {
     for (let index = 1; index <= this.storedRating; index += 0.5) {
-      this.somevalue = !this.somevalue;
-      this.hoverArray[index] = true;
-      this.halfStar[index] = false;
+      Vue.set(this.fullStar, index, true);
+      Vue.set(this.halfStar, index, false);
     }
 
-    // eslint-disable-next-line no-plusplus
     for (let index = Math.floor(this.storedRating); index <= 5; index += 0.5) {
-      this.somevalue = !this.somevalue;
-      if (this.storedRating !== 5) this.hoverArray[index + 1] = false;
-      this.halfStar[index] = false;
+      if (this.storedRating !== 5) Vue.set(this.fullStar, index + 1, false);
+      Vue.set(this.halfStar, index, false);
     }
 
-    this.somevalue = !this.somevalue;
     if (!Number.isInteger(this.storedRating)) {
-      this.somevalue = !this.somevalue;
-      this.halfStar[Math.round(this.storedRating)] = true;
+      Vue.set(this.halfStar, Math.round(this.storedRating), true);
     }
-  }
-
-  hoverHalfStar(rating: number) {
-    this.somevalue = !this.somevalue;
-
-    this.halfStar[rating] = true;
-    this.hoverArray[rating] = false;
-    // eslint-disable-next-line no-plusplus
-    for (let index = 1; index <= rating; index++) {
-      this.somevalue = !this.somevalue;
-      this.hoverArray[index - 1] = true;
-      this.halfStar[index - 1] = false;
-    }
-    // eslint-disable-next-line no-plusplus
-    for (let index = rating; index <= 5; index++) {
-      this.hoverArray[index] = false;
-      if (index > rating) this.halfStar[index] = false;
-    }
-  }
-
-  hoverHalfStarX(rating: number) {
-    this.somevalue = !this.somevalue;
-    // eslint-disable-next-line no-plusplus
-    for (let index = 1; index <= 5; index++) {
-      if (index > rating) {
-        this.halfStar[index] = false;
-      }
-    }
-  }
-
-  rateHalfStar(rating: number) {
-    this.addRating(rating);
   }
 }
 </script>
@@ -226,72 +181,69 @@ export default class MovieRating extends Vue {
 
 <template>
   <div class='ratingContainer'
-    v-on:mouseleave='resetRating()'>
-    <div style='display: none'>{{somevalue}}, {{hoverArray[0]}}</div>
+    v-on:mouseleave='restoreRating()'>
     <div>
       <div
         class='x x1'
-        v-on:mouseleave='hoverHalfStarX(1)'
-        v-on:mouseenter='hoverHalfStar(1)'
-        v-on:click='rateHalfStar(0.5)' />
-      <div class='y y1' v-on:mouseenter='rateMovie(1)' v-on:click='addRating(1)' />
-      <StarHalfFullIcon v-if='halfStar[1]' />
+        v-on:mouseenter='hoverHalfStarIn(1)'
+        v-on:click='addRating(0.5)' />
+      <div class='y y1'
+        v-on:mouseenter='hoverStarIn(1)'
+        v-on:click='addRating(1)' />
+      <StarHalfFullIcon
+        v-if='halfStar[1]' />
       <StarIcon
-        v-if='hoverArray[1]' />
+        v-if='fullStar[1]' />
       <StarOutlineIcon
-        v-if='!hoverArray[1] && halfStar[1] === false' />
+        v-if='!fullStar[1] && halfStar[1] === false' />
     </div>
     <div>
       <div
         class='x x2'
-        v-on:mouseleave='hoverHalfStarX(2)'
-        v-on:mouseenter='hoverHalfStar(2)'
-        v-on:click='rateHalfStar(1.5)' />
-      <div class='y y2' v-on:mouseenter='rateMovie(2)' v-on:click='addRating(2)' />
+        v-on:mouseenter='hoverHalfStarIn(2)'
+        v-on:click='addRating(1.5)' />
+      <div class='y y2' v-on:mouseenter='hoverStarIn(2)' v-on:click='addRating(2)' />
       <StarHalfFullIcon v-if='halfStar[2]' />
       <StarIcon
-        v-if='hoverArray[2]' />
+        v-if='fullStar[2]' />
       <StarOutlineIcon
-        v-if='!hoverArray[2] && halfStar[2] === false' />
+        v-if='!fullStar[2] && halfStar[2] === false' />
     </div>
     <div>
       <div
         class='x x3'
-        v-on:mouseleave='hoverHalfStarX(3)'
-        v-on:mouseenter='hoverHalfStar(3)'
-        v-on:click='rateHalfStar(2.5)' />
-      <div class='y y3' v-on:mouseenter='rateMovie(3)' v-on:click='addRating(3)' />
+        v-on:mouseenter='hoverHalfStarIn(3)'
+        v-on:click='addRating(2.5)' />
+      <div class='y y3' v-on:mouseenter='hoverStarIn(3)' v-on:click='addRating(3)' />
       <StarHalfFullIcon v-if='halfStar[3]' />
       <StarIcon
-        v-if='hoverArray[3]' />
+        v-if='fullStar[3]' />
       <StarOutlineIcon
-        v-if='!hoverArray[3] && halfStar[3] === false' />
+        v-if='!fullStar[3] && halfStar[3] === false' />
     </div>
     <div>
       <div
         class='x x4'
-        v-on:mouseleave='hoverHalfStarX(4)'
-        v-on:mouseenter='hoverHalfStar(4)'
-        v-on:click='rateHalfStar(3.5)' />
-      <div class='y y4' v-on:mouseenter='rateMovie(4)' v-on:click='addRating(4)' />
+        v-on:mouseenter='hoverHalfStarIn(4)'
+        v-on:click='addRating(3.5)' />
+      <div class='y y4' v-on:mouseenter='hoverStarIn(4)' v-on:click='addRating(4)' />
       <StarHalfFullIcon v-if='halfStar[4]' />
       <StarIcon
-        v-if='hoverArray[4]' />
+        v-if='fullStar[4]' />
       <StarOutlineIcon
-        v-if='!hoverArray[4] && halfStar[4] === false' />
+        v-if='!fullStar[4] && halfStar[4] === false' />
     </div>
     <div>
       <div
         class='x x5'
-        v-on:mouseleave='hoverHalfStarX(5)'
-        v-on:mouseenter='hoverHalfStar(5)'
-        v-on:click='rateHalfStar(4.5)' />
-      <div class='y y5' v-on:mouseenter='rateMovie(55)' v-on:click='addRating(5)' />
+        v-on:mouseenter='hoverHalfStarIn(5)'
+        v-on:click='addRating(4.5)' />
+      <div class='y y5' v-on:mouseenter='hoverStarIn(5)' v-on:click='addRating(5)' />
       <StarHalfFullIcon v-if='halfStar[5]' />
       <StarIcon
-        v-if='hoverArray[5]' />
+        v-if='fullStar[5]' />
       <StarOutlineIcon
-        v-if='!hoverArray[5] && halfStar[5] === false' />
+        v-if='!fullStar[5] && halfStar[5] === false' />
     </div>
   </div>
 </template>
