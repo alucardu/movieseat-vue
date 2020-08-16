@@ -71,10 +71,12 @@ export default class MovieRating extends Vue {
         this.somevalue = !this.somevalue;
         this.hoverArray[index] = true;
         this.halfStar[index] = false;
+        this.halfStar[index + 1] = false;
       } else {
         this.somevalue = !this.somevalue;
         this.hoverArray[index] = true;
         this.halfStar[index] = false;
+        this.halfStar[index + 1] = false;
         //
       }
     }
@@ -109,26 +111,52 @@ export default class MovieRating extends Vue {
 
   resetRating() {
     // eslint-disable-next-line no-plusplus
-    for (let index = 1; index <= this.storedRating; index++) {
+    for (let index = 1; index <= this.storedRating; index += 0.5) {
       this.somevalue = !this.somevalue;
       this.hoverArray[index] = true;
+      this.halfStar[index] = false;
+    }
+
+    // eslint-disable-next-line no-plusplus
+    for (let index = Math.floor(this.storedRating); index <= 5; index += 0.5) {
+      this.somevalue = !this.somevalue;
+      if (this.storedRating !== 5) this.hoverArray[index + 1] = false;
+      this.halfStar[index] = false;
+    }
+
+    this.somevalue = !this.somevalue;
+    if (!Number.isInteger(this.storedRating)) {
+      this.somevalue = !this.somevalue;
+      this.halfStar[Math.round(this.storedRating)] = true;
     }
   }
 
   hoverHalfStar(rating: number) {
     this.somevalue = !this.somevalue;
+
     this.halfStar[rating] = true;
     this.hoverArray[rating] = false;
     // eslint-disable-next-line no-plusplus
     for (let index = 1; index <= rating; index++) {
       this.somevalue = !this.somevalue;
       this.hoverArray[index - 1] = true;
+      this.halfStar[index - 1] = false;
+    }
+    // eslint-disable-next-line no-plusplus
+    for (let index = rating; index <= 5; index++) {
+      this.hoverArray[index] = false;
+      if (index > rating) this.halfStar[index] = false;
     }
   }
 
   hoverHalfStarX(rating: number) {
     this.somevalue = !this.somevalue;
-    this.halfStar[rating] = false;
+    // eslint-disable-next-line no-plusplus
+    for (let index = 1; index <= 5; index++) {
+      if (index > rating) {
+        this.halfStar[index] = false;
+      }
+    }
   }
 
   rateHalfStar(rating: number) {
