@@ -80,58 +80,25 @@ export default class MovieRating extends Vue {
 
 <style scoped lang="scss">
   .ratingContainer {
-    position: relative;
     display: flex;
     div {
+      position: relative;
+      div {
+        position: absolute;
+        cursor: pointer;
+        top: 8px;
+        height: 28px;
+        width: 16.5px;
+      }
+      div.half-star {
+        left: 0;
+      }
+      div.full-star {
+        left: 16.5px;
+      }
       span {
         color: #efff00;
-        cursor: pointer;
-        float: left;
         padding: 10px 4.5px;
-      }
-    }
-    .x {
-      position: absolute;
-      cursor: pointer;
-      top: 8px;
-      height: 28px;
-      width: 16.5px;
-      &.x1 {
-        left: 0px;
-      }
-      &.x2 {
-        left: 33px;
-      }
-      &.x3 {
-        left: 66px;
-      }
-      &.x4 {
-        left: 99px;
-      }
-      &.x5 {
-        left: 132px;
-      }
-    }
-    .y {
-      position: absolute;
-      cursor: pointer;
-      top: 8px;
-      height: 28px;
-      width: 16.5px;
-      &.y1 {
-        left: 17px;
-      }
-      &.y2 {
-        left: 50px;
-      }
-      &.y3 {
-        left: 82px;
-      }
-      &.y4 {
-        left: 115px;
-      }
-      &.y5 {
-        left: 148px;
       }
     }
   }
@@ -140,68 +107,21 @@ export default class MovieRating extends Vue {
 <template>
   <div class='ratingContainer'
     v-on:mouseleave='displayRating(storedRating)'>
-    <div>
+    <div v-for='n in 5' :key='n'>
       <div
-        class='x x1'
-        v-on:mouseenter='displayRating(0.5)'
-        v-on:click='addRating(0.5)' />
-      <div class='y y1'
-        v-on:mouseenter='displayRating(1)'
-        v-on:click='addRating(1)' />
+        :class="[`half-star half-star${n}`]"
+        v-on:mouseenter='displayRating(n - 0.5)'
+        v-on:click='addRating(n - 0.5)' />
+      <div
+        :class="[`full-star full-star${n}`]"
+        v-on:mouseenter='displayRating(n)'
+        v-on:click='addRating(n)' />
       <StarHalfFullIcon
-        v-if='halfStar[1]' />
+        v-if='halfStar[n]' />
       <StarIcon
-        v-if='fullStar[1]' />
+        v-if='fullStar[n]' />
       <StarOutlineIcon
-        v-if='!fullStar[1] && halfStar[1] === false' />
-    </div>
-    <div>
-      <div
-        class='x x2'
-        v-on:mouseenter='displayRating(1.5)'
-        v-on:click='addRating(1.5)' />
-      <div class='y y2' v-on:mouseenter='displayRating(2)' v-on:click='addRating(2)' />
-      <StarHalfFullIcon v-if='halfStar[2]' />
-      <StarIcon
-        v-if='fullStar[2]' />
-      <StarOutlineIcon
-        v-if='!fullStar[2] && halfStar[2] === false' />
-    </div>
-    <div>
-      <div
-        class='x x3'
-        v-on:mouseenter='displayRating(2.5)'
-        v-on:click='addRating(2.5)' />
-      <div class='y y3' v-on:mouseenter='displayRating(3)' v-on:click='addRating(3)' />
-      <StarHalfFullIcon v-if='halfStar[3]' />
-      <StarIcon
-        v-if='fullStar[3]' />
-      <StarOutlineIcon
-        v-if='!fullStar[3] && halfStar[3] === false' />
-    </div>
-    <div>
-      <div
-        class='x x4'
-        v-on:mouseenter='displayRating(3.5)'
-        v-on:click='addRating(3.5)' />
-      <div class='y y4' v-on:mouseenter='displayRating(4)' v-on:click='addRating(4)' />
-      <StarHalfFullIcon v-if='halfStar[4]' />
-      <StarIcon
-        v-if='fullStar[4]' />
-      <StarOutlineIcon
-        v-if='!fullStar[4] && halfStar[4] === false' />
-    </div>
-    <div>
-      <div
-        class='x x5'
-        v-on:mouseenter='displayRating(4.5)'
-        v-on:click='addRating(4.5)' />
-      <div class='y y5' v-on:mouseenter='displayRating(5)' v-on:click='addRating(5)' />
-      <StarHalfFullIcon v-if='halfStar[5]' />
-      <StarIcon
-        v-if='fullStar[5]' />
-      <StarOutlineIcon
-        v-if='!fullStar[5] && halfStar[5] === false' />
+        v-if='!fullStar[n] && halfStar[n] === false' />
     </div>
   </div>
 </template>
