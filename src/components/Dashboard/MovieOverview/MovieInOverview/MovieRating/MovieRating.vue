@@ -1,0 +1,127 @@
+<script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import StarOutlineIcon from 'vue-material-design-icons/StarOutline.vue';
+import StarIcon from 'vue-material-design-icons/Star.vue';
+import StarHalfFullIcon from 'vue-material-design-icons/StarHalfFull.vue';
+import localforage from 'localforage';
+import SnackbarStore from '@/stores/SnackbarStore';
+
+type Movie = {
+  title: string;
+  release_date: string;
+  id: number;
+  backdrop_path: string;
+}
+
+type Rating = {
+  value: number;
+  id: number;
+}
+
+@Component({
+  components: {
+    StarOutlineIcon,
+    StarIcon,
+    StarHalfFullIcon,
+  },
+})
+export default class MovieRating extends Vue {
+  @Prop() private movie!: Movie;
+
+  storedRating = 0;
+
+  mounted() {
+    localforage.getItem<[]>('rating').then((ratings) => {
+      if (ratings) {
+        ratings.forEach((rating: Rating) => {
+          if (rating.id === this.movie.id) {
+            this.storedRating = rating.value;
+            this.displayRating(this.storedRating);
+          }
+        });
+      }
+    });
+  }
+
+  fullStar = ['fillerValue', false, false, false, false, false];
+
+  halfStar = ['fillerValue', false, false, false, false, false];
+
+  displayRating(rating: number) {
+    for (let index = 1; index <= 5; index++) {
+      Vue.set(this.fullStar, index, false);
+      Vue.set(this.halfStar, index, false);
+      if (index <= rating) Vue.set(this.fullStar, index, true);
+      if (!Number.isInteger(rating)) {
+        if (index < Math.round(rating)) Vue.set(this.fullStar, index, true);
+        if (index === Math.round(rating)) Vue.set(this.halfStar, index, true);
+      }
+    }
+  }
+
+  addRating(rating: number) {
+    localforage.getItem<Rating[]>('rating').then((value) => {
+      if (value) {
+        value.forEach((ratings: Rating, index) => {
+          if (ratings.id === this.movie.id) value.splice(index, 1);
+        });
+        value.push({ value: rating, id: this.movie.id });
+        localforage.setItem('rating', value);
+      }
+    });
+    this.storedRating = rating;
+    SnackbarStore.commit('showSnackbar', {
+      text: `${this.movie.title} has been rated!`,
+      type: 'success',
+    });
+  }
+}
+</script>
+
+<style scoped lang="scss">
+  .ratingContainer {
+    display: flex;
+    div {
+      position: relative;
+      div {
+        position: absolute;
+        cursor: pointer;
+        top: 8px;
+        height: 28px;
+        width: 16.5px;
+      }
+      div.half-star {
+        left: 0;
+      }
+      div.full-star {
+        left: 16.5px;
+      }
+      span {
+        color: #efff00;
+        padding: 10px 4.5px;
+      }
+    }
+  }
+</style>
+
+<template>
+  <div class='ratingContainer'
+    v-on:mouseleave='displayRating(storedRating)'>
+    <div v-for='n in 5' :key='n'>
+      <div
+        :class="[`half-star half-star${n}`]"
+        v-on:mouseenter='displayRating(n - 0.5)'
+        v-on:click='addRating(n - 0.5)' />
+      <div
+        :class="[`full-star full-star${n}`]"
+        v-on:mouseenter='displayRating(n)'
+        v-on:click='addRating(n)' />
+      <StarHalfFullIcon
+        v-if='halfStar[n]' />
+      <StarIcon
+        v-if='fullStar[n]' />
+      <StarOutlineIcon
+        v-if='!fullStar[n] && halfStar[n] === false' />
+    </div>
+  </div>
+</template>

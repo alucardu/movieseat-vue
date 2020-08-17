@@ -1,6 +1,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import RemoveMovieFromDashboard from './RemoveMovieFromDashboard/RemoveMovieFromDashboard.vue';
+import MovieRating from './MovieRating/MovieRating.vue';
 
 type Movie = {
   title: string;
@@ -12,6 +13,7 @@ type Movie = {
 @Component({
   components: {
     RemoveMovieFromDashboard,
+    MovieRating,
   },
 })
 export default class MovieInOverview extends Vue {
@@ -31,6 +33,16 @@ export default class MovieInOverview extends Vue {
       height: 100%;
       width: 100%;
     }
+    .overlay {
+      position: absolute;
+      background: #000000b5;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+    }
   }
 </style>
 
@@ -41,6 +53,9 @@ export default class MovieInOverview extends Vue {
       v-on:mouseleave='hover = false'
     >
     <img :src="imagePath + movie.poster_path" />
-    <RemoveMovieFromDashboard v-if='hover' :movie=movie />
+    <div class='overlay' v-if='hover'>
+      <MovieRating :movie=movie />
+      <RemoveMovieFromDashboard v-if='hover' :movie=movie />
+    </div>
   </div>
 </template>
