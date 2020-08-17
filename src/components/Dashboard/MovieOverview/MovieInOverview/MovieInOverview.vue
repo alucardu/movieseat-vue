@@ -1,5 +1,6 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import ChevronDownIcon from 'vue-material-design-icons/ChevronDown.vue';
 import RemoveMovieFromDashboard from './RemoveMovieFromDashboard/RemoveMovieFromDashboard.vue';
 import MovieRating from './MovieRating/MovieRating.vue';
 
@@ -14,14 +15,19 @@ type Movie = {
   components: {
     RemoveMovieFromDashboard,
     MovieRating,
+    ChevronDownIcon,
   },
 })
 export default class MovieInOverview extends Vue {
-  @Prop() readonly movie!: Movie;
+  @Prop() private movie!: Movie;
 
   hover = false;
 
   imagePath = 'https://image.tmdb.org/t/p/w185/';
+
+  toggleExpandedMovieInformation() {
+    this.$emit('toggleExpandedMovieInformation', this.movie);
+  }
 }
 </script>
 
@@ -42,6 +48,19 @@ export default class MovieInOverview extends Vue {
       display: flex;
       flex-direction: column;
       padding: 8px;
+      .bottom {
+        user-select: none;
+        display: flex;
+        align-self: flex-end;
+        justify-content: center;
+        width: 100%;
+        padding-bottom: 8px;
+        margin-top: auto;
+        span {
+          cursor: pointer;
+          padding: 0 8px;
+        }
+      }
     }
   }
 </style>
@@ -55,7 +74,10 @@ export default class MovieInOverview extends Vue {
     <img :src="imagePath + movie.poster_path" />
     <div class='overlay' v-if='hover'>
       <MovieRating :movie=movie />
-      <RemoveMovieFromDashboard v-if='hover' :movie=movie />
+      <div class='bottom'>
+        <RemoveMovieFromDashboard :movie=movie />
+        <ChevronDownIcon v-on:click='toggleExpandedMovieInformation' />
+      </div>
     </div>
   </div>
 </template>

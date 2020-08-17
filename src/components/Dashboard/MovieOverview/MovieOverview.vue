@@ -4,6 +4,7 @@ import localforage from 'localforage';
 import { chunk } from 'lodash';
 import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
 import MovieInOverview from './MovieInOverview/MovieInOverview.vue';
+import ExpandedMovieInformation from './ExpandedMovieInformation/ExpandedMovieInformation.vue';
 
 type Movie = {
   title: string;
@@ -20,9 +21,18 @@ type SortingConfiguration = {
 @Component({
   components: {
     MovieInOverview,
+    ExpandedMovieInformation,
   },
 })
 export default class MovieOverview extends Vue {
+  currentIndex = -1;
+
+  movie: Movie | undefined;
+
+  currentMovie: Movie | undefined;
+
+  uniqueKey = 0;
+
   mounted() {
     localforage.getItem('sortingConfiguration').then((value) => {
       if (!value) localforage.setItem('sortingConfiguration', { sortType: 'Release date', ascOrder: true });
@@ -51,6 +61,17 @@ export default class MovieOverview extends Vue {
       if (movieList) TrackedMoviestStore.dispatch('sortTrackedMovies', movieList);
     });
   }
+
+  toggleExpandedMovieInformation(movie: Movie, index: number) {
+    this.uniqueKey += 1;
+    this.movie = movie;
+    if (index === this.currentIndex && this.currentMovie?.id === movie.id) {
+      this.currentIndex = -1;
+    } else {
+      this.currentIndex = index;
+      this.currentMovie = movie;
+    }
+  }
 }
 </script>
 
@@ -58,19 +79,36 @@ export default class MovieOverview extends Vue {
   #movieList {
     list-style: none;
     display: flex;
+    flex-direction: column;;
     padding: 0;
     margin: 0 12px;
+    div {
+      width: 100%;
+      display: flex;
+      li {
+        max-width: 185px;
+      }
+    }
   }
 </style>
 
 <template>
   <div>
     <ul id="movieList" v-for='(movieRow, index) in MoviesInRows()' :key='index'>
-      <li
-        v-for='movie in movieRow'
-        :key='movie.id'>
-          <MovieInOverview :movie=movie />
-      </li>
+      <div>
+        <li
+          v-for='movie in movieRow'
+          :key='movie.id'>
+            <MovieInOverview
+              :movie=movie
+              @toggleExpandedMovieInformation="toggleExpandedMovieInformation(movie, index)"/>
+        </li>
+      </div>
+      <ExpandedMovieInformation
+        v-if='currentIndex === index'
+        :movie=movie
+        @toggleExpandedMovieInformation="toggleExpandedMovieInformation(movie, index)"
+        :key='uniqueKey' />
     </ul>
   </div>
 </template>
