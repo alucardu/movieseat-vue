@@ -38,17 +38,6 @@ export default class RemoveMovieFromDashboard extends Vue {
 </script>
 
 <style scoped lang="scss">
-  span.delete-icon {
-    display: flex;
-    align-self: flex-end;
-    justify-content: center;
-    width: 100%;
-    padding-bottom: 8px;
-    margin-top: auto;
-    svg {
-      cursor: pointer;
-    }
-  }
 </style>
 
 <template>
