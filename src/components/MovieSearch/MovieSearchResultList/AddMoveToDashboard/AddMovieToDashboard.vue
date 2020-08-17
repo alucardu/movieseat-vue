@@ -12,6 +12,11 @@ type Movie = {
   backdrop_path: string;
 }
 
+type Rating = {
+  value: number;
+  id: number;
+}
+
 const backdropUrl = 'https://image.tmdb.org/t/p/w780';
 
 @Component
@@ -32,6 +37,7 @@ export default class AddMovieToDashboard extends Vue {
   }
 
   addMovie() {
+    this.setInitialRating();
     let text = `${this.movie.title} is already added to your watchlist.`;
     let type = 'warning';
     if (!this.checkIsMovieDuplicate(this.movies, this.movie)) {
@@ -44,6 +50,10 @@ export default class AddMovieToDashboard extends Vue {
     }
     MovieSearchListStore.commit('clearList', []);
     SnackbarStore.commit('showSnackbar', { text, type });
+  }
+
+  setInitialRating() {
+    TrackedMoviestStore.dispatch('addRating', { movie: this.movie });
   }
 
   checkIsMovieDuplicate = (movies: Movie[], movie: Movie) => {
