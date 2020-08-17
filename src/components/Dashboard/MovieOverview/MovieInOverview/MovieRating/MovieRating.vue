@@ -89,12 +89,12 @@ export default class MovieRating extends Vue {
         top: 8px;
         height: 28px;
         width: 16.5px;
-      }
-      div.half-star {
-        left: 0;
-      }
-      div.full-star {
-        left: 16.5px;
+        &.half-star {
+          left: 0;
+        }
+        &.full-star {
+          left: 16.5px;
+        }
       }
       span {
         color: #efff00;
