@@ -5,6 +5,7 @@ import StarIcon from 'vue-material-design-icons/Star.vue';
 import StarHalfFullIcon from 'vue-material-design-icons/StarHalfFull.vue';
 import localforage from 'localforage';
 import SnackbarStore from '@/stores/SnackbarStore';
+import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
 
 type Movie = {
   title: string;
@@ -60,20 +61,13 @@ export default class MovieRating extends Vue {
   }
 
   addRating(rating: number) {
-    localforage.getItem<Rating[]>('rating').then((value) => {
-      if (value) {
-        value.forEach((ratings: Rating, index) => {
-          if (ratings.id === this.movie.id) value.splice(index, 1);
-        });
-        value.push({ value: rating, id: this.movie.id });
-        localforage.setItem('rating', value);
-      }
-    });
-    this.storedRating = rating;
+    TrackedMoviestStore.dispatch('addRating', { movie: this.movie, rating });
+
     SnackbarStore.commit('showSnackbar', {
       text: `${this.movie.title} has been rated!`,
       type: 'success',
     });
+    TrackedMoviestStore.dispatch('sortTrackedMovies', TrackedMoviestStore.state.trackedMovieList);
   }
 }
 </script>

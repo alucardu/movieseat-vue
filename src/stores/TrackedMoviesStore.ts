@@ -17,6 +17,16 @@ type SortingConfiguration = {
   ascOrder: boolean;
 }
 
+type Rating = {
+  value: number;
+  id: number;
+}
+
+type RatingObject = {
+  rating: number;
+  movie: Movie;
+}
+
 function returnSortType(movie: Movie, selectedSortType: string) {
   switch (selectedSortType) {
     case 'Release date':
@@ -42,12 +52,40 @@ async function sortTrackedMovies(state: ActionContext<{
       sortType = value.sortType;
       ascOrder = value.ascOrder;
       const trackedMovies = movieList;
-      trackedMoviesSorted = orderBy(trackedMovies, [
-        (movie) => returnSortType(movie, sortType)], [ascOrder ? 'asc' : 'desc']);
+
+      if (value.sortType === 'Rating') {
+        localforage.getItem<[]>('rating').then((ratings) => {
+          const ratedMovesSorted = orderBy(ratings, [(rating: Rating) => rating.value], [ascOrder ? 'asc' : 'desc']);
+          ratedMovesSorted.forEach((ratedMovie: Rating) => {
+            trackedMovies.forEach((trackedMovie: Movie) => {
+              if (ratedMovie.id === trackedMovie.id) trackedMoviesSorted.push(trackedMovie);
+            });
+          });
+        });
+      } else {
+        trackedMoviesSorted = orderBy(trackedMovies, [
+          (movie) => returnSortType(movie, sortType)], [ascOrder ? 'asc' : 'desc']);
+      }
       state.commit('populateTrackedMovies', trackedMoviesSorted);
     }
   });
   return trackedMoviesSorted;
+}
+
+function addRating(ratingObject: RatingObject) {
+  let initialRating = 0;
+  const { movie } = ratingObject;
+
+  localforage.getItem<Rating[]>('rating').then((value) => {
+    if (value) {
+      value.forEach((ratings: Rating, index) => {
+        if (ratings.id === movie.id) initialRating = ratingObject.rating || ratings.value;
+        if (ratings.id === movie.id) value.splice(index, 1);
+      });
+      value.push({ value: initialRating, id: movie.id });
+      localforage.setItem('rating', value);
+    }
+  });
 }
 
 export default new Vuex.Store({
@@ -78,6 +116,9 @@ export default new Vuex.Store({
       const trackedMovieList = state.getters.list;
       trackedMovieList.push(movie);
       sortTrackedMovies(state, trackedMovieList);
+    },
+    addRating(state, ratingObject: RatingObject) {
+      addRating(ratingObject);
     },
   },
 });

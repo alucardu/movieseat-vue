@@ -21,7 +21,7 @@ type SortingConfiguration = {
   },
 })
 export default class MovieSorting extends Vue {
-  orderTypes = ['Release date', 'Title'];
+  orderTypes = ['Release date', 'Title', 'Rating'];
 
   sortType = ''
 
