@@ -14,9 +14,9 @@ type Movie = {
   backdrop_path: string;
 }
 
-type Rating = {
-  value: number;
-  id: number;
+type RatingObject = {
+  rating: number;
+  movie: Movie;
 }
 
 @Component({
@@ -32,11 +32,11 @@ export default class MovieRating extends Vue {
   storedRating = 0;
 
   mounted() {
-    localforage.getItem<[]>('rating').then((ratings) => {
-      if (ratings) {
-        ratings.forEach((rating: Rating) => {
-          if (rating.id === this.movie.id) {
-            this.storedRating = rating.value;
+    localforage.getItem<RatingObject[]>('rating').then((ratingArray) => {
+      if (ratingArray) {
+        ratingArray.forEach((rating: RatingObject) => {
+          if (rating.movie.id === this.movie.id) {
+            this.storedRating = rating.rating;
             this.displayRating(this.storedRating);
           }
         });

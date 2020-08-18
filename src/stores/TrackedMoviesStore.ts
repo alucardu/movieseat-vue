@@ -17,11 +17,6 @@ type SortingConfiguration = {
   ascOrder: boolean;
 }
 
-type Rating = {
-  value: number;
-  id: number;
-}
-
 type RatingObject = {
   rating: number;
   movie: Movie;
@@ -54,11 +49,11 @@ async function sortTrackedMovies(state: ActionContext<{
       const trackedMovies = movieList;
 
       if (value.sortType === 'Rating') {
-        localforage.getItem<[]>('rating').then((ratings) => {
-          const ratedMovesSorted = orderBy(ratings, [(rating: Rating) => rating.value], [ascOrder ? 'asc' : 'desc']);
-          ratedMovesSorted.forEach((ratedMovie: Rating) => {
+        localforage.getItem<RatingObject[]>('rating').then((ratingArray) => {
+          const ratedMovesSorted = orderBy(ratingArray, [(rating: RatingObject) => rating.rating], [ascOrder ? 'asc' : 'desc']);
+          ratedMovesSorted.forEach((ratedMovie: RatingObject) => {
             trackedMovies.forEach((trackedMovie: Movie) => {
-              if (ratedMovie.id === trackedMovie.id) trackedMoviesSorted.push(trackedMovie);
+              if (ratedMovie.movie.id === trackedMovie.id) trackedMoviesSorted.push(trackedMovie);
             });
           });
         });
@@ -74,16 +69,17 @@ async function sortTrackedMovies(state: ActionContext<{
 
 function addRating(ratingObject: RatingObject) {
   let initialRating = 0;
+  initialRating = ratingObject.rating > 0 ? initialRating = ratingObject.rating : 0;
   const { movie } = ratingObject;
 
-  localforage.getItem<Rating[]>('rating').then((value) => {
-    if (value) {
-      value.forEach((ratings: Rating, index) => {
-        if (ratings.id === movie.id) initialRating = ratingObject.rating || ratings.value;
-        if (ratings.id === movie.id) value.splice(index, 1);
+  localforage.getItem<RatingObject[]>('rating').then((ratingArray) => {
+    if (ratingArray) {
+      ratingArray.forEach((ratings: RatingObject, index) => {
+        if (ratings.movie.id === movie.id) initialRating = ratingObject.rating || ratings.rating;
+        if (ratings.movie.id === movie.id) ratingArray.splice(index, 1);
       });
-      value.push({ value: initialRating, id: movie.id });
-      localforage.setItem('rating', value);
+      ratingArray.push({ rating: initialRating, movie });
+      localforage.setItem('rating', ratingArray);
     }
   });
 }
