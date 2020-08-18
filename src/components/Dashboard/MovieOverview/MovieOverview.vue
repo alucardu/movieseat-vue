@@ -14,6 +14,8 @@ import ExpandedMovieInformation from './ExpandedMovieInformation/ExpandedMovieIn
   },
 })
 export default class MovieOverview extends Vue {
+  mq = window.matchMedia('(max-width: 600px)').matches;
+
   currentIndex = -1;
 
   movie: Movie | undefined;
@@ -41,7 +43,7 @@ export default class MovieOverview extends Vue {
   numberOfMovies = 0;
 
   MoviesInRows() {
-    this.numberOfMovies = Math.floor((window.innerWidth - 24) / 185);
+    this.numberOfMovies = this.mq ? 100 : Math.floor((window.innerWidth - 24) / 185);
     return chunk(TrackedMoviestStore.state.trackedMovieList, this.numberOfMovies);
   }
 
@@ -76,6 +78,16 @@ export default class MovieOverview extends Vue {
       display: flex;
       li {
         max-width: 185px;
+      }
+    }
+  }
+  @media only screen and (max-width: 600px) {
+    #movieList {
+      div {
+        overflow: scroll;
+        li {
+          min-width: 185px;
+        }
       }
     }
   }

@@ -18,9 +18,9 @@ export default class App extends Vue {}
 </script>
 
 <style lang="scss">
-body, html {
-  height: 100%;
-}
+  body, html {
+    height: 100%;
+  }
   body {
     background: linear-gradient(#0fcece 104px,#252525 0%);
     display: flex;
@@ -30,6 +30,12 @@ body, html {
     #app {
       max-width: 1920px;
       width: 100%;
+    }
+  }
+  @media only screen and (max-width: 600px) {
+    body {
+      padding-top: 40px;
+      background: #252525;
     }
   }
 </style>

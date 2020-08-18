@@ -75,6 +75,11 @@ export default class MovieSearchResultList extends Vue {
       }
     }
   }
+  @media only screen and (max-width: 600px){
+    #movieSearchResultList {
+      width: 94%;
+    }
+  }
 </style>
 
 <template>

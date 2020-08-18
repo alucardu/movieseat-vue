@@ -34,7 +34,7 @@ export default class MovieSearch extends Vue {
   }, 500);
 
   clearSearchResults() {
-    this.searchInput.value = '';
+    if (this.searchInput) this.searchInput.value = '';
     MovieSearchListStore.commit('clearList', []);
   }
 }
@@ -60,6 +60,13 @@ export default class MovieSearch extends Vue {
         &::placeholder {
           color: #fff;
         }
+      }
+    }
+  }
+  @media only screen and (max-width: 600px) {
+    div#SeachContainer {
+      input {
+        width: 94%;
       }
     }
   }

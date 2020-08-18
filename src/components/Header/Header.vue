@@ -31,6 +31,18 @@ export default class Header extends Vue {
       margin-left: auto;
     }
   }
+  @media only screen and (max-width: 600px) {
+    header {
+      padding: 0;
+      position: fixed;
+      z-index: 2;
+      width: 100%;
+      top: 0;
+      h1 {
+        display: none;;
+      }
+    }
+  }
 </style>
 
 <template>
