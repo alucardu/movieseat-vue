@@ -61,6 +61,7 @@ export default class MovieRating extends Vue {
   }
 
   addRating(rating: number) {
+    this.storedRating = rating;
     TrackedMoviestStore.dispatch('addRating', { movie: this.movie, rating });
 
     SnackbarStore.commit('showSnackbar', {
