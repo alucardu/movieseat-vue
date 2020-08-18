@@ -1,26 +1,10 @@
 import Vue from 'vue';
+import { Movie, RatingObject, SortingConfiguration } from '@/types/';
 import Vuex, { ActionContext } from 'vuex';
 import { orderBy } from 'lodash';
 import localforage from 'localforage';
 
 Vue.use(Vuex);
-
-type Movie = {
-  title: string;
-  release_date: string;
-  id: number;
-  backdrop_path: string;
-}
-
-type SortingConfiguration = {
-  sortType: string;
-  ascOrder: boolean;
-}
-
-type RatingObject = {
-  rating: number;
-  movie: Movie;
-}
 
 function returnSortType(movie: Movie, selectedSortType: string) {
   switch (selectedSortType) {

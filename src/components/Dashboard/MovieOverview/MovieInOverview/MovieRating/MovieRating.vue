@@ -1,23 +1,12 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Movie, RatingObject } from '@/types/';
 import StarOutlineIcon from 'vue-material-design-icons/StarOutline.vue';
 import StarIcon from 'vue-material-design-icons/Star.vue';
 import StarHalfFullIcon from 'vue-material-design-icons/StarHalfFull.vue';
 import localforage from 'localforage';
 import SnackbarStore from '@/stores/SnackbarStore';
 import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
-
-type Movie = {
-  title: string;
-  release_date: string;
-  id: number;
-  backdrop_path: string;
-}
-
-type RatingObject = {
-  rating: number;
-  movie: Movie;
-}
 
 @Component({
   components: {

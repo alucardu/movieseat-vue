@@ -1,14 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { orderBy } from 'lodash';
+import { Movie } from '@/types/';
 
 Vue.use(Vuex);
-
-type Movie = {
-  title: string;
-  release_date: string;
-  id: number;
-}
 
 export default new Vuex.Store({
   state: {

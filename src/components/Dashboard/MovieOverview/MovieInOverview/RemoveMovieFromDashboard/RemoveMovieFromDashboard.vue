@@ -1,16 +1,10 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Movie } from '@/types/';
 import TrackedMoviesStore from '@/stores/TrackedMoviesStore';
 import localforage from 'localforage';
 import DeleteForeverIcon from 'vue-material-design-icons/DeleteForever.vue';
 import SnackbarStore from '@/stores/SnackbarStore';
-
-type Movie = {
-  title: string;
-  release_date: string;
-  id: number;
-  backdrop_path: string;
-}
 
 @Component({
   components: {
