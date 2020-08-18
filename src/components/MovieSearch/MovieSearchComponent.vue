@@ -1,13 +1,9 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { Movie } from '@/types/';
 import MovieSearchResultList from './MovieSearchResultList/MovieSearchResultList.vue';
 import MovieSearchInput from './MovieSearchInput/MovieSearchInput.vue';
 import MovieSearchListStore from '../../stores/MovieSearchListStore';
-
-type Movie = {
-  title: string;
-  id: number;
-}
 
 @Component({
   components: {

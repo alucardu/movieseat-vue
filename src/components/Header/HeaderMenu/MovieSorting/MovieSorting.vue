@@ -1,20 +1,9 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { Movie, SortingConfiguration } from '@/types/';
 import SnackbarStore from '@/stores/SnackbarStore';
 import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
 import localforage from 'localforage';
-
-type Movie = {
-  title: string;
-  release_date: string;
-  id: number;
-  backdrop_path: string;
-}
-
-type SortingConfiguration = {
-  sortType: string;
-  ascOrder: boolean;
-}
 
 @Component({
   components: {

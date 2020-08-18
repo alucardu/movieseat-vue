@@ -1,15 +1,9 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Movie } from '@/types/';
 import ChevronDownIcon from 'vue-material-design-icons/ChevronDown.vue';
 import RemoveMovieFromDashboard from './RemoveMovieFromDashboard/RemoveMovieFromDashboard.vue';
 import MovieRating from './MovieRating/MovieRating.vue';
-
-type Movie = {
-  title: string;
-  release_date: string;
-  id: number;
-  backdrop_path: string;
-}
 
 @Component({
   components: {

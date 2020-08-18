@@ -1,16 +1,10 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Movie } from '@/types/';
 import localforage from 'localforage';
 import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
 import MovieSearchListStore from '@/stores/MovieSearchListStore';
 import SnackbarStore from '@/stores/SnackbarStore';
-
-type Movie = {
-  title: string;
-  release_date: string;
-  id: number;
-  backdrop_path: string;
-}
 
 type Rating = {
   value: number;

@@ -1,13 +1,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Movie } from '@/types/';
 import CloseIcon from 'vue-material-design-icons/Close.vue';
-
-type Movie = {
-  title: string;
-  release_date: string;
-  id: number;
-  backdrop_path: string;
-}
 
 const backdropUrl = 'https://image.tmdb.org/t/p/w1280';
 

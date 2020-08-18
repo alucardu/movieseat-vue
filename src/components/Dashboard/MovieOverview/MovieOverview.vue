@@ -2,21 +2,10 @@
 import { Vue, Component } from 'vue-property-decorator';
 import localforage from 'localforage';
 import { chunk } from 'lodash';
+import { Movie } from '@/types/';
 import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
 import MovieInOverview from './MovieInOverview/MovieInOverview.vue';
 import ExpandedMovieInformation from './ExpandedMovieInformation/ExpandedMovieInformation.vue';
-
-type Movie = {
-  title: string;
-  release_date: string;
-  id: number;
-  backdrop_path: string;
-}
-
-type SortingConfiguration = {
-  sortType: string;
-  ascOrder: boolean;
-}
 
 @Component({
   components: {
