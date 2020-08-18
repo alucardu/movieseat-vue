@@ -18,10 +18,19 @@ export default class App extends Vue {}
 </script>
 
 <style lang="scss">
+body, html {
+  height: 100%;
+}
   body {
-    background: #252525;
+    background: linear-gradient(#0fcece 104px,#252525 0%);
+    display: flex;
+    justify-content: center;
     color: #fff;
     font-family: Arial, Helvetica, sans-serif;
+    #app {
+      max-width: 1920px;
+      width: 100%;
+    }
   }
 </style>
 

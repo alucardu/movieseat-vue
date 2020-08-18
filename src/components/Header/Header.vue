@@ -16,7 +16,7 @@ export default class Header extends Vue {
   header {
     display: flex;
     background: #0fcece;
-    padding: 24px;
+    padding: 24px 8px;
     align-items: center;
     h1 {
       font-size: 3.5em;
