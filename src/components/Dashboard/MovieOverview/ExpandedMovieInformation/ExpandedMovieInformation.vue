@@ -3,8 +3,6 @@ import { defineComponent, PropType } from '@vue/composition-api';
 import { Movie } from '@/types/';
 import CloseIcon from 'vue-material-design-icons/Close.vue';
 
-const backdropUrl = 'https://image.tmdb.org/t/p/w1280';
-
 export default defineComponent({
   props: {
     movie: {
@@ -17,6 +15,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const { movie } = props;
+    const backdropUrl = 'https://image.tmdb.org/t/p/w1280';
     const backgroundImage = movie ? `url(${backdropUrl + movie.backdrop_path}` : null;
 
     const toggleMovieInformation = () => {
