@@ -1,26 +1,34 @@
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent, PropType } from '@vue/composition-api';
 import { Movie } from '@/types/';
 import CloseIcon from 'vue-material-design-icons/Close.vue';
 
 const backdropUrl = 'https://image.tmdb.org/t/p/w1280';
 
-@Component({
+export default defineComponent({
+  props: {
+    movie: {
+      type: Object as PropType<Movie>,
+    },
+  },
+  name: 'ExpandedMovieInformation',
   components: {
     CloseIcon,
   },
-})
-export default class ExpandedMovieInformation extends Vue {
-  @Prop() private movie!: Movie;
+  setup(props, { emit }) {
+    const { movie } = props;
+    const backgroundImage = movie ? `url(${backdropUrl + movie.backdrop_path}` : null;
 
-  get style() {
-    return this.movie.backdrop_path ? `background-image: url(${backdropUrl + this.movie.backdrop_path}` : null;
-  }
+    const toggleMovieInformation = () => {
+      emit('toggleExpandedMovieInformation', props.movie);
+    };
 
-  foo() {
-    this.$emit('toggleExpandedMovieInformation', this.movie);
-  }
-}
+    return {
+      toggleMovieInformation,
+      backgroundImage,
+    };
+  },
+});
 </script>
 
 <style scoped lang="scss">
@@ -55,9 +63,10 @@ export default class ExpandedMovieInformation extends Vue {
 </style>
 
 <template>
-  <div class='expanded-movie-information-container' :style='style'>
+  <div class='expanded-movie-information-container'
+    :style='{ backgroundImage: backgroundImage }'>
     <div class='overlay'>
-      <CloseIcon class='close' v-on:click='foo' />
+      <CloseIcon class='close' v-on:click='toggleMovieInformation' />
       <h1>{{ movie.title }}</h1>
       <span class='release-date'> {{ movie.release_date }}</span>
       <p>{{ movie.overview }}</p>
