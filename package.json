@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.159",
+    "@vue/composition-api": "^1.0.0-beta.11",
     "core-js": "^3.6.5",
     "localforage": "^1.9.0",
     "lodash": "^4.17.19",
