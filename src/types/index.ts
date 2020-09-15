@@ -3,6 +3,9 @@ export type Movie = {
   release_date: string;
   id: number;
   backdrop_path: string;
+  poster_path: string;
+  overview: string;
+  selected: boolean;
 }
 
 export type RatingObject = {

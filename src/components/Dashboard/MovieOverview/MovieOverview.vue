@@ -1,5 +1,8 @@
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import {
+  computed,
+  defineComponent, onMounted, ref,
+} from '@vue/composition-api';
 import localforage from 'localforage';
 import { chunk } from 'lodash';
 import { Movie } from '@/types/';
@@ -7,63 +10,65 @@ import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
 import MovieInOverview from './MovieInOverview/MovieInOverview.vue';
 import ExpandedMovieInformation from './ExpandedMovieInformation/ExpandedMovieInformation.vue';
 
-@Component({
+export default defineComponent({
+  name: 'MovieOverview',
   components: {
     MovieInOverview,
     ExpandedMovieInformation,
   },
-})
-export default class MovieOverview extends Vue {
-  mq = window.matchMedia('(max-width: 600px)').matches;
+  setup() {
+    const mq = window.matchMedia('(max-width: 600px)').matches;
+    const toggleValue = ref(false);
+    const currentMovie = ref<Movie>();
+    const currentIndex = ref(0);
+    const numberOfMovies = ref(0);
 
-  currentIndex = -1;
+    const Movies = computed(() => TrackedMoviestStore.state.trackedMovieList);
 
-  movie: Movie | undefined;
-
-  currentMovie: Movie | undefined;
-
-  uniqueKey = 0;
-
-  mounted() {
-    localforage.getItem('sortingConfiguration').then((value) => {
-      if (!value) localforage.setItem('sortingConfiguration', { sortType: 'Release date', ascOrder: true });
-    });
-    this.populateTrackedMoviesState();
-
-    localforage.getItem('rating').then((value) => {
-      if (!value) localforage.setItem('rating', []);
-    });
-
-    window.addEventListener('resize', this.MoviesInRows);
-    return () => {
-      window.removeEventListener('resize', this.MoviesInRows);
+    const MoviesInRows = () => {
+      numberOfMovies.value = mq ? 100 : Math.floor((window.innerWidth - 24) / 185);
+      return chunk(TrackedMoviestStore.state.trackedMovieList, numberOfMovies.value);
     };
-  }
 
-  numberOfMovies = 0;
+    const populateTrackedMoviesState = () => {
+      localforage.getItem<Movie[]>('trackedMovies').then((movieList) => {
+        if (movieList) TrackedMoviestStore.dispatch('sortTrackedMovies', movieList);
+      });
+    };
 
-  MoviesInRows() {
-    this.numberOfMovies = this.mq ? 100 : Math.floor((window.innerWidth - 24) / 185);
-    return chunk(TrackedMoviestStore.state.trackedMovieList, this.numberOfMovies);
-  }
+    const toggleExpandedMovieInformation = (movie: Movie, index: number) => {
+      currentIndex.value = index;
+      toggleValue.value = !toggleValue.value || currentMovie.value?.id !== movie.id;
+      currentMovie.value = movie;
+    };
 
-  populateTrackedMoviesState() {
-    localforage.getItem<Movie[]>('trackedMovies').then((movieList) => {
-      if (movieList) TrackedMoviestStore.dispatch('sortTrackedMovies', movieList);
+    onMounted(() => {
+      localforage.getItem('sortingConfiguration').then((value) => {
+        if (!value) localforage.setItem('sortingConfiguration', { sortType: 'Release date', ascOrder: true });
+      });
+      populateTrackedMoviesState();
+
+      localforage.getItem('rating').then((value) => {
+        if (!value) localforage.setItem('rating', []);
+      });
+
+      window.addEventListener('resize', MoviesInRows);
+      return () => {
+        window.removeEventListener('resize', MoviesInRows);
+      };
     });
-  }
 
-  toggleExpandedMovieInformation(movie: Movie, index: number) {
-    this.uniqueKey += 1;
-    this.movie = movie;
-    if (index === this.currentIndex && this.currentMovie?.id === movie.id) {
-      this.currentIndex = -1;
-    } else {
-      this.currentIndex = index;
-      this.currentMovie = movie;
-    }
-  }
-}
+    return {
+      Movies,
+      MoviesInRows,
+      toggleExpandedMovieInformation,
+      toggleValue,
+      currentMovie,
+      currentIndex,
+    };
+  },
+});
+
 </script>
 
 <style scoped lang="scss">
@@ -80,6 +85,12 @@ export default class MovieOverview extends Vue {
         max-width: 185px;
       }
     }
+    .slide-enter-active, .slide-leave-active {
+      transition: height .2s ease-in-out;
+    }
+    .slide-enter, .slide-leave-to {
+      height: 0;
+    }
   }
   @media only screen and (max-width: 600px) {
     #movieList {
@@ -90,6 +101,7 @@ export default class MovieOverview extends Vue {
         }
       }
     }
+
   }
 </style>
 
@@ -101,15 +113,17 @@ export default class MovieOverview extends Vue {
           v-for='movie in movieRow'
           :key='movie.id'>
             <MovieInOverview
-              :movie=movie
-              @toggleExpandedMovieInformation="toggleExpandedMovieInformation(movie, index)"/>
+              :movie="movie"
+              @toggleExpandedMovieInformation="toggleExpandedMovieInformation(movie, index)" />
         </li>
       </div>
-      <ExpandedMovieInformation
-        v-if='currentIndex === index'
-        :movie=movie
-        @toggleExpandedMovieInformation="toggleExpandedMovieInformation(movie, index)"
-        :key='uniqueKey' />
+      <transition name="slide">
+        <ExpandedMovieInformation
+          v-if='toggleValue && currentIndex === index'
+          :movie="currentMovie"
+          @toggleExpandedMovieInformation="toggleExpandedMovieInformation(currentMovie)"
+          :key='currentMovie.id' />
+      </transition>
     </ul>
   </div>
 </template>
