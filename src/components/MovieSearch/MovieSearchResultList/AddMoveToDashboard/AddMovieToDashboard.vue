@@ -22,8 +22,13 @@ export default class AddMovieToDashboard extends Vue {
   }
 
   movies: Array<Movie> = [{
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    title: 'default', release_date: 'default', id: 0, backdrop_path: 'default',
+    title: '',
+    id: 0,
+    backdrop_path: '',
+    poster_path: '',
+    overview: '',
+    release_date: '',
+    selected: false,
   }];
 
   mounted() {

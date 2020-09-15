@@ -2,14 +2,23 @@
 import { defineComponent, PropType } from '@vue/composition-api';
 import { Movie } from '@/types/';
 import CloseIcon from 'vue-material-design-icons/Close.vue';
+import TrackedMoviesStore from '@/stores/TrackedMoviesStore';
 
 export default defineComponent({
+  name: 'ExpandedMovieInformation',
   props: {
     movie: {
       type: Object as PropType<Movie>,
+      default: {
+        title: '',
+        id: 0,
+        backdrop_path: '',
+        poster_path: '',
+        overview: '',
+        release_date: '',
+      },
     },
   },
-  name: 'ExpandedMovieInformation',
   components: {
     CloseIcon,
   },
@@ -19,7 +28,8 @@ export default defineComponent({
     const backgroundImage = movie ? `url(${backdropUrl + movie.backdrop_path}` : null;
 
     const toggleMovieInformation = () => {
-      emit('toggleExpandedMovieInformation', props.movie);
+      emit('toggleExpandedMovieInformation', movie);
+      TrackedMoviesStore.dispatch('selectMovie', movie.id);
     };
 
     return {
@@ -34,13 +44,13 @@ export default defineComponent({
   .expanded-movie-information-container {
     height: 400px;
     background: #000;
-    padding: 24px;
     background-size: cover;
     background-position: top;
+    overflow: hidden;
     .overlay {
       background: #00000094;
       width: 100%;
-      height: 100%;
+      margin: 24px;
       padding: 24px;
       border-radius: 8px;;
       h1 {
@@ -56,6 +66,11 @@ export default defineComponent({
       .close {
         float: right;
         cursor: pointer;
+        transition: transform .2s, color .2s, opacity .2s;
+        &:hover {
+          color: #ff6a00;
+          transform: scale(1.5);
+        }
       }
     }
   }
@@ -67,7 +82,7 @@ export default defineComponent({
     <div class='overlay'>
       <CloseIcon class='close' v-on:click='toggleMovieInformation' />
       <h1>{{ movie.title }}</h1>
-      <span class='release-date'> {{ movie.release_date }}</span>
+      <span class='release-date'>{{ movie.release_date }}</span>
       <p>{{ movie.overview }}</p>
     </div>
   </div>

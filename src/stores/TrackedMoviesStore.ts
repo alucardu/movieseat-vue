@@ -82,6 +82,11 @@ export default new Vuex.Store({
     removeMovieFromTrackedList(state, payload) {
       state.trackedMovieList = payload;
     },
+    selectMovie(state, id: number) {
+      state.trackedMovieList.forEach((movie) => {
+        movie.selected = movie.selected ? false : movie.id === id;
+      });
+    },
   },
   getters: {
     list(state) {
@@ -99,6 +104,9 @@ export default new Vuex.Store({
     },
     addRating(state, ratingObject: RatingObject) {
       addRating(ratingObject);
+    },
+    selectMovie({ commit }, id: number) {
+      commit('selectMovie', id);
     },
   },
 });
