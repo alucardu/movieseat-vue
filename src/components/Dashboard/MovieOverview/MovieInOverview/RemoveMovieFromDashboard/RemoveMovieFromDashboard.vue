@@ -1,34 +1,54 @@
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Movie } from '@/types/';
 import TrackedMoviesStore from '@/stores/TrackedMoviesStore';
 import localforage from 'localforage';
 import DeleteForeverIcon from 'vue-material-design-icons/DeleteForever.vue';
 import SnackbarStore from '@/stores/SnackbarStore';
+import { defineComponent, PropType } from '@vue/composition-api';
 
-@Component({
+export default defineComponent({
+  name: 'RemoveMovieFromDashboard',
+  props: {
+    movie: {
+      type: Object as PropType<Movie>,
+      default: {
+        title: '',
+        id: 0,
+        backdrop_path: '',
+        poster_path: '',
+        overview: '',
+        release_date: '',
+        selected: false,
+      },
+    },
+  },
   components: {
     DeleteForeverIcon,
   },
-})
-export default class RemoveMovieFromDashboard extends Vue {
-  @Prop() private movie!: Movie;
+  setup(prop) {
+    const { movie } = prop;
 
-  removeMovie() {
-    const { trackedMovieList } = TrackedMoviesStore.state;
-    trackedMovieList.forEach((item, index) => {
-      if (item.id === this.movie.id) {
-        trackedMovieList.splice(index, 1);
-        localforage.setItem('trackedMovies', trackedMovieList);
-        TrackedMoviesStore.commit('removeMovieFromTrackedList', trackedMovieList);
-        SnackbarStore.commit('showSnackbar', {
-          text: `${this.movie.title} has been removed from your watchlist.`,
-          type: 'success',
-        });
-      }
-    });
-  }
-}
+    const removeMovie = () => {
+      const { trackedMovieList } = TrackedMoviesStore.state;
+      trackedMovieList.forEach((item, index) => {
+        if (item.id === movie.id) {
+          trackedMovieList.splice(index, 1);
+          localforage.setItem('trackedMovies', trackedMovieList);
+          TrackedMoviesStore.commit('removeMovieFromTrackedList', trackedMovieList);
+          SnackbarStore.commit('showSnackbar', {
+            text: `${movie.title} asd has been removed from your watchlist.`,
+            type: 'success',
+          });
+        }
+      });
+    };
+
+    return {
+      removeMovie,
+    };
+  },
+});
+
 </script>
 
 <style scoped lang="scss">
