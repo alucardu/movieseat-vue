@@ -1,5 +1,4 @@
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Movie, RatingObject } from '@/types/';
 import StarOutlineIcon from 'vue-material-design-icons/StarOutline.vue';
 import StarIcon from 'vue-material-design-icons/Star.vue';
@@ -7,59 +6,107 @@ import StarHalfFullIcon from 'vue-material-design-icons/StarHalfFull.vue';
 import localforage from 'localforage';
 import SnackbarStore from '@/stores/SnackbarStore';
 import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
+import {
+  defineComponent, onMounted, PropType, reactive, ref,
+} from '@vue/composition-api';
 
-@Component({
+export default defineComponent({
+  name: 'MovieRating',
+  props: {
+    movie: {
+      type: Object as PropType<Movie>,
+      default: {
+        title: '',
+        id: 0,
+        backdrop_path: '',
+        poster_path: '',
+        overview: '',
+        release_date: '',
+        selected: false,
+      },
+    },
+  },
   components: {
     StarOutlineIcon,
     StarIcon,
     StarHalfFullIcon,
   },
-})
-export default class MovieRating extends Vue {
-  @Prop() private movie!: Movie;
+  setup(prop) {
+    const storedRating = ref(0);
+    const { movie } = prop;
 
-  storedRating = 0;
-
-  mounted() {
-    localforage.getItem<RatingObject[]>('rating').then((ratingArray) => {
-      if (ratingArray) {
-        ratingArray.forEach((rating: RatingObject) => {
-          if (rating.movie.id === this.movie.id) {
-            this.storedRating = rating.rating;
-            this.displayRating(this.storedRating);
-          }
-        });
-      }
+    const fullStar = reactive({
+      list: [
+        { value: false },
+        { value: false },
+        { value: false },
+        { value: false },
+        { value: false },
+        { value: false },
+      ],
     });
-  }
 
-  fullStar = ['fillerValue', false, false, false, false, false];
+    const halfStar = [false, false, false, false, false, false];
 
-  halfStar = ['fillerValue', false, false, false, false, false];
-
-  displayRating(rating: number) {
-    for (let index = 1; index <= 5; index++) {
-      Vue.set(this.fullStar, index, false);
-      Vue.set(this.halfStar, index, false);
-      if (index <= rating) Vue.set(this.fullStar, index, true);
-      if (!Number.isInteger(rating)) {
-        if (index < Math.round(rating)) Vue.set(this.fullStar, index, true);
-        if (index === Math.round(rating)) Vue.set(this.halfStar, index, true);
+    const displayRating = (rating: number) => {
+      for (let index = 1; index <= 5; index++) {
+        fullStar.list[index].value = false;
+        halfStar[index] = false;
+        if (index <= rating) fullStar.list[index].value = true;
+        if (!Number.isInteger(rating)) {
+          if (index < Math.round(rating)) fullStar.list[index].value = true;
+          if (index === Math.round(rating)) halfStar[index] = true;
+        }
       }
-    }
-  }
+    };
 
-  addRating(rating: number) {
-    this.storedRating = rating;
-    TrackedMoviestStore.dispatch('addRating', { movie: this.movie, rating });
+    const addRating = (rating: number) => {
+      storedRating.value = rating;
+      let initialRating = 0;
+      initialRating = rating > 0 ? initialRating = rating : 0;
 
-    SnackbarStore.commit('showSnackbar', {
-      text: `${this.movie.title} has been rated!`,
-      type: 'success',
+      localforage.getItem<RatingObject[]>('rating').then((ratingArray) => {
+        if (ratingArray) {
+          ratingArray.forEach((ratings: RatingObject, index) => {
+            if (ratings.movie.id === movie.id) {
+              initialRating = rating || ratings.rating;
+              ratingArray.splice(index, 1);
+            }
+          });
+          ratingArray.push({ rating: initialRating, movie });
+          localforage.setItem('rating', ratingArray);
+        }
+      });
+
+      SnackbarStore.commit('showSnackbar', {
+        text: `${movie.title} has been rated!`,
+        type: 'success',
+      });
+      TrackedMoviestStore.dispatch('sortTrackedMovies', TrackedMoviestStore.state.trackedMovieList);
+    };
+
+    onMounted(() => {
+      localforage.getItem<RatingObject[]>('rating').then((ratingArray) => {
+        if (ratingArray) {
+          ratingArray.forEach((rating: RatingObject) => {
+            if (rating.movie.id === movie.id) {
+              storedRating.value = rating.rating;
+              displayRating(storedRating.value);
+            }
+          });
+        }
+      });
     });
-    TrackedMoviestStore.dispatch('sortTrackedMovies', TrackedMoviestStore.state.trackedMovieList);
-  }
-}
+
+    return {
+      storedRating,
+      displayRating,
+      addRating,
+      halfStar,
+      fullStar,
+    };
+  },
+});
 </script>
 
 <style scoped lang="scss">
@@ -103,9 +150,9 @@ export default class MovieRating extends Vue {
       <StarHalfFullIcon
         v-if='halfStar[n]' />
       <StarIcon
-        v-if='fullStar[n]' />
+        v-if='fullStar.list[n].value' />
       <StarOutlineIcon
-        v-if='!fullStar[n] && halfStar[n] === false' />
+        v-if='!fullStar.list[n].value && halfStar[n] === false' />
     </div>
   </div>
 </template>
