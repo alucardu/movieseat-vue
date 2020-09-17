@@ -51,23 +51,6 @@ async function sortTrackedMovies(state: ActionContext<{
   return trackedMoviesSorted;
 }
 
-function addRating(ratingObject: RatingObject) {
-  let initialRating = 0;
-  initialRating = ratingObject.rating > 0 ? initialRating = ratingObject.rating : 0;
-  const { movie } = ratingObject;
-
-  localforage.getItem<RatingObject[]>('rating').then((ratingArray) => {
-    if (ratingArray) {
-      ratingArray.forEach((ratings: RatingObject, index) => {
-        if (ratings.movie.id === movie.id) initialRating = ratingObject.rating || ratings.rating;
-        if (ratings.movie.id === movie.id) ratingArray.splice(index, 1);
-      });
-      ratingArray.push({ rating: initialRating, movie });
-      localforage.setItem('rating', ratingArray);
-    }
-  });
-}
-
 export default new Vuex.Store({
   state: {
     trackedMovieList: [] as Movie[],
@@ -101,9 +84,6 @@ export default new Vuex.Store({
       const trackedMovieList = state.getters.list;
       trackedMovieList.push(movie);
       sortTrackedMovies(state, trackedMovieList);
-    },
-    addRating(state, ratingObject: RatingObject) {
-      addRating(ratingObject);
     },
     selectMovie({ commit }, id: number) {
       commit('selectMovie', id);
