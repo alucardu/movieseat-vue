@@ -7,7 +7,7 @@ import localforage from 'localforage';
 import SnackbarStore from '@/stores/SnackbarStore';
 import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
 import {
-  defineComponent, onMounted, PropType, reactive, ref,
+  defineComponent, onMounted, PropType, ref,
 } from '@vue/composition-api';
 
 export default defineComponent({
@@ -35,26 +35,24 @@ export default defineComponent({
     const storedRating = ref(0);
     const { movie } = prop;
 
-    const fullStar = reactive({
-      list: [
-        { value: false },
-        { value: false },
-        { value: false },
-        { value: false },
-        { value: false },
-        { value: false },
-      ],
-    });
+    const fullStar = ref([
+      { value: false },
+      { value: false },
+      { value: false },
+      { value: false },
+      { value: false },
+      { value: false },
+    ]);
 
     const halfStar = [false, false, false, false, false, false];
 
     const displayRating = (rating: number) => {
       for (let index = 1; index <= 5; index++) {
-        fullStar.list[index].value = false;
+        fullStar.value[index].value = false;
         halfStar[index] = false;
-        if (index <= rating) fullStar.list[index].value = true;
+        if (index <= rating) fullStar.value[index].value = true;
         if (!Number.isInteger(rating)) {
-          if (index < Math.round(rating)) fullStar.list[index].value = true;
+          if (index < Math.round(rating)) fullStar.value[index].value = true;
           if (index === Math.round(rating)) halfStar[index] = true;
         }
       }
@@ -150,9 +148,9 @@ export default defineComponent({
       <StarHalfFullIcon
         v-if='halfStar[n]' />
       <StarIcon
-        v-if='fullStar.list[n].value' />
+        v-if='fullStar[n].value' />
       <StarOutlineIcon
-        v-if='!fullStar.list[n].value && halfStar[n] === false' />
+        v-if='!fullStar[n].value && halfStar[n] === false' />
     </div>
   </div>
 </template>
