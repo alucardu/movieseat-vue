@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Movie, SortingConfiguration } from '@/types/';
+import { SortingConfiguration } from '@/types/';
 import SnackbarStore from '@/stores/SnackbarStore';
 import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
 import localforage from 'localforage';
@@ -20,17 +20,6 @@ export default defineComponent({
       SnackbarStore.commit('showSnackbar', { text: 'Sorting has been applied and stored.', type: 'success' });
     };
 
-    const returnSortType = (movie: Movie, selectedSortType: string) => {
-      switch (selectedSortType) {
-        case 'Release date':
-          return movie.release_date;
-        case 'Title':
-          return movie.title;
-        default:
-          return '';
-      }
-    };
-
     onMounted(() => {
       localforage.getItem<SortingConfiguration>('sortingConfiguration').then((value) => {
         if (value) {
@@ -45,7 +34,6 @@ export default defineComponent({
       sortTypeRef,
       ascOrderRef,
       applySorting,
-      returnSortType,
     };
   },
 });
