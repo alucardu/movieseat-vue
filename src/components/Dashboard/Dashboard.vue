@@ -1,13 +1,13 @@
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from '@vue/composition-api';
 import MovieOverview from './MovieOverview/MovieOverview.vue';
 
-@Component({
+export default defineComponent({
+  name: 'Dashboard',
   components: {
     MovieOverview,
   },
-})
-export default class Dashboard extends Vue {}
+});
 </script>
 
 <style scoped lang="scss">
