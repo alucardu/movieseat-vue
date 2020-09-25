@@ -1,15 +1,13 @@
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { defineComponent } from '@vue/composition-api';
 import HeaderMenu from './HeaderMenu/HeaderMenu.vue';
 
-@Component({
+export default defineComponent({
+  name: 'Header',
   components: {
     HeaderMenu,
   },
-})
-export default class Header extends Vue {
-  @Prop() private msg!: string;
-}
+});
 </script>
 
 <style scoped lang="scss">

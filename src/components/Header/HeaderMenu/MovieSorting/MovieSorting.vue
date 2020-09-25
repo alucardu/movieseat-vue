@@ -1,49 +1,54 @@
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
 import { Movie, SortingConfiguration } from '@/types/';
 import SnackbarStore from '@/stores/SnackbarStore';
 import TrackedMoviestStore from '@/stores/TrackedMoviesStore';
 import localforage from 'localforage';
+import { defineComponent, onMounted, ref } from '@vue/composition-api';
 
-@Component({
-  components: {
-  },
-})
-export default class MovieSorting extends Vue {
-  orderTypes = ['Release date', 'Title', 'Rating'];
+export default defineComponent({
+  name: 'MovieSorting',
+  setup(prop, { emit }) {
+    const orderTypes = ['Release date', 'Title', 'Rating'];
+    const sortTypeRef = ref('');
+    const ascOrderRef = ref(false);
 
-  sortType = ''
+    const applySorting = (sortType: string, ascOrder: boolean) => {
+      localforage.setItem('sortingConfiguration', { sortType, ascOrder }).then(() => {
+        emit('input', false);
+        TrackedMoviestStore.dispatch('sortTrackedMovies', TrackedMoviestStore.state.trackedMovieList);
+      });
+      SnackbarStore.commit('showSnackbar', { text: 'Sorting has been applied and stored.', type: 'success' });
+    };
 
-  ascOrder = false;
-
-  mounted() {
-    localforage.getItem<SortingConfiguration>('sortingConfiguration').then((value) => {
-      if (value) {
-        this.sortType = value.sortType;
-        this.ascOrder = value.ascOrder;
+    const returnSortType = (movie: Movie, selectedSortType: string) => {
+      switch (selectedSortType) {
+        case 'Release date':
+          return movie.release_date;
+        case 'Title':
+          return movie.title;
+        default:
+          return '';
       }
-    });
-  }
+    };
 
-  applySorting() {
-    localforage.setItem('sortingConfiguration', { sortType: this.sortType, ascOrder: this.ascOrder }).then(() => {
-      this.$emit('input', false);
-      TrackedMoviestStore.dispatch('sortTrackedMovies', TrackedMoviestStore.state.trackedMovieList);
+    onMounted(() => {
+      localforage.getItem<SortingConfiguration>('sortingConfiguration').then((value) => {
+        if (value) {
+          sortTypeRef.value = value.sortType;
+          ascOrderRef.value = value.ascOrder;
+        }
+      });
     });
-    SnackbarStore.commit('showSnackbar', { text: 'Sorting has been applied and stored.', type: 'success' });
-  }
 
-  returnSortType(movie: Movie, selectedSortType: string) {
-    switch (selectedSortType) {
-      case 'Release date':
-        return movie.release_date;
-      case 'Title':
-        return movie.title;
-      default:
-        return '';
-    }
-  }
-}
+    return {
+      orderTypes,
+      sortTypeRef,
+      ascOrderRef,
+      applySorting,
+      returnSortType,
+    };
+  },
+});
 </script>
 
 <style lang="scss">
@@ -81,13 +86,14 @@ export default class MovieSorting extends Vue {
       label="Sort movies on dashboard by:"
       color="#fff"
       hide-details="false"
-      v-model='sortType'
+      v-model='sortTypeRef'
     ></v-select>
     <v-checkbox
-      v-model="ascOrder"
+      v-model="ascOrderRef"
       label="List in ascending order"
       hide-details="false"
     ></v-checkbox>
-    <v-btn large class='button' v-on:click='applySorting'>Apply sorting</v-btn>
+    <v-btn large class='button'
+      v-on:click='applySorting(sortTypeRef, ascOrderRef)'>Apply sorting</v-btn>
   </div>
 </template>
