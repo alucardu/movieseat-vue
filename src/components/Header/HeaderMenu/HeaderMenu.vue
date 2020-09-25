@@ -1,23 +1,28 @@
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
 import MenuIcon from 'vue-material-design-icons/Menu.vue';
+import { defineComponent, ref } from '@vue/composition-api';
 import MovieSorting from './MovieSorting/MovieSorting.vue';
 
-@Component({
+export default defineComponent({
+  name: 'HeaderMenu',
   components: {
     MenuIcon,
     MovieSorting,
   },
-})
-export default class HeaderMenu extends Vue {
-  menuDisplay = false;
+  setup() {
+    const menuDisplay = ref(false);
 
-  parentValue = false
+    const toggleMenu = () => {
+      menuDisplay.value = !menuDisplay.value;
+    };
 
-  toggleMenu() {
-    this.menuDisplay = !this.menuDisplay;
-  }
-}
+    return {
+      menuDisplay,
+      toggleMenu,
+    };
+  },
+});
+
 </script>
 
 <style lang="scss">
